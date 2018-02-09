@@ -8,7 +8,13 @@ public class CD extends Command{
         setCmd("cd");
     }
     public void run(){
-        File dir = new File(getParas()[0]);
+        String[] paras = getParas();
+        if(paras.length == 0)
+            return;
+
+        File dir = new File(paras[0]);
+        if(paras[0].equals(".."))
+            dir = Shell.getDir().getParentFile();
         if(dir.exists())
             Shell.setDir(dir);
         else

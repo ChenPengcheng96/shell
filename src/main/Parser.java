@@ -13,6 +13,10 @@ public class Parser {
         String[] paras = new String[cmdWords.length-1];
         System.arraycopy(cmdWords,1,paras,0,cmdWords.length-1);
         Command command = (Command)Shell.getCmdMap().get(cmd);
+        if(command == null){
+            System.out.println("'"+cmd+"'"+"不是外部命令，也不是可运行的程序或批处理文件。");
+            return null;
+        }
         command.setParas(paras);
         return command;
     }

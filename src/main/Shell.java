@@ -21,11 +21,11 @@ public class Shell {
 
     }
     public static File getDir() {
-        return dir;
+        return dir.getAbsoluteFile();
     }
 
     public static void setDir(File dir) {
-        Shell.dir = dir;
+        Shell.dir = dir.getAbsoluteFile();
     }
 
     private static void showPrompt(){
@@ -41,7 +41,8 @@ public class Shell {
             showPrompt();
             String s = new Receiver().getCmdLine();
             Command command = Parser.parse(s);
-            command.run();
+            if(command != null)
+                command.run();
         }
     }
 }
