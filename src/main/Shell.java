@@ -2,6 +2,8 @@ package main;
 
 import myCommand.CD;
 import myCommand.Command;
+import myCommand.LS;
+import myCommand.PWD;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +19,10 @@ public class Shell {
     }
 
     private Shell() {
+        //建立命令映射表
         cmdMap.put("cd",new CD());
+        cmdMap.put("ls",new LS());
+        cmdMap.put("pwd",new PWD());
 
     }
     public static File getDir() {
