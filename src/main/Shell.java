@@ -16,7 +16,7 @@ public class Shell {
         return cmdMap;
     }
 
-    Shell() {
+    private Shell() {
         cmdMap.put("cd",new CD());
 
     }

@@ -1,10 +1,5 @@
 package myCommand;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 public abstract class Command {
     private String cmd;
     private String[] paras;
