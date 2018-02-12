@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 public abstract class Command {
-
+    private static final String SEPARATOR = System.lineSeparator();
     private String cmd;
     private List<String> paras;
     private File rdFile;//重定向文件夹
@@ -22,11 +22,21 @@ public abstract class Command {
         this.rdFile = rdFile;
     }
 
-    public void outPut(String info) throws IOException {
-        if(mode == 0)
+    void println(String info) throws IOException {
+        if (mode == 0)
             System.out.println(info);
-        if(mode == 1 || mode == 2) {
-            FileWriter fw = new FileWriter(rdFile,true);
+        if (mode == 1 || mode == 2) {
+            FileWriter fw = new FileWriter(rdFile, true);
+            fw.write(info+SEPARATOR);
+            fw.close();
+        }
+    }
+
+    void print(String info) throws IOException {
+        if (mode == 0)
+            System.out.print(info);
+        if (mode == 1 || mode == 2) {
+            FileWriter fw = new FileWriter(rdFile, true);
             fw.write(info);
             fw.close();
         }

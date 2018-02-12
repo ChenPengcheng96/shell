@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class Shell {
     private static File dir = new File("");
-    private static Map<String,? super Command> cmdMap= new HashMap<>();
+    private static Map<String, ? super Command> cmdMap = new HashMap<>();
 
     public static Map<String, ? super Command> getCmdMap() {
         return cmdMap;
@@ -20,11 +20,12 @@ public class Shell {
 
     private Shell() {
         //建立命令映射表
-        cmdMap.put("cd",new CD());
-        cmdMap.put("ls",new LS());
-        cmdMap.put("pwd",new PWD());
+        cmdMap.put("cd", new CD());
+        cmdMap.put("ls", new LS());
+        cmdMap.put("pwd", new PWD());
 
     }
+
     public static File getDir() {
         return dir.getAbsoluteFile();
     }
@@ -33,8 +34,8 @@ public class Shell {
         Shell.dir = dir.getAbsoluteFile();
     }
 
-    private static void showPrompt(){
-        System.out.print(dir.getAbsolutePath()+">>");
+    private static void showPrompt() {
+        System.out.print(dir.getAbsolutePath() + ">>");
     }
 
     //1、等待用户输入命令，按回车执行
@@ -46,7 +47,7 @@ public class Shell {
             showPrompt();
             String s = new Receiver().getCmdLine();
             Command command = new Parser(s).parse();
-            if(command != null)
+            if (command != null)
                 command.run();
         }
     }
