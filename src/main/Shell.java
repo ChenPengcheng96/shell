@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class Shell {
     private static File dir = new File("");
-    private static Map<String,? super Command> cmdMap= new HashMap<String,Command>();
+    private static Map<String,? super Command> cmdMap= new HashMap<>();
 
     public static Map<String, ? super Command> getCmdMap() {
         return cmdMap;
@@ -45,7 +45,7 @@ public class Shell {
         while (true) {
             showPrompt();
             String s = new Receiver().getCmdLine();
-            Command command = Parser.parse(s);
+            Command command = new Parser(s).parse();
             if(command != null)
                 command.run();
         }

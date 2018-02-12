@@ -1,12 +1,11 @@
 package myCommand;
 import main.Shell;
 
-public class PWD extends Command{
-    public PWD(){
-        setCmd("pwd");
-    }
+import java.io.IOException;
 
-    public void run(){
-        System.out.println("\\"+Shell.getDir().getName());
+public class PWD extends Command{
+    public void run() throws IOException {
+        String info = Shell.getDir().getAbsolutePath();
+        outPut(info);
     }
 }
