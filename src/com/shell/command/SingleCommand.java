@@ -1,6 +1,7 @@
 package com.shell.command;
 
 import com.shell.Shell;
+import com.shell.parser.Parser.CmdLineArgs;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,11 +10,11 @@ import java.util.List;
 
 public abstract class SingleCommand implements ICommand {
     private Shell shell;
-    private List<String> args;
+    private CmdLineArgs args;
     private InputStream input;
     private OutputStream output;
 
-    public SingleCommand(Shell shell, List<String> args,
+    public SingleCommand(Shell shell, CmdLineArgs args,
                          InputStream input, OutputStream output) {
         this.shell = shell;
         this.args = args;
@@ -30,7 +31,7 @@ public abstract class SingleCommand implements ICommand {
         this.shell = shell;
     }
 
-    public void setArgs(List<String> args) {
+    public void setArgs(CmdLineArgs args) {
         this.args = args;
     }
 
@@ -46,7 +47,7 @@ public abstract class SingleCommand implements ICommand {
         return shell;
     }
 
-    public List<String> getArgs() {
+    public CmdLineArgs getArgs() {
         return args;
     }
 

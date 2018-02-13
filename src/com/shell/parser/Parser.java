@@ -1,10 +1,7 @@
 package com.shell.parser;
 
 import com.shell.Shell;
-import com.shell.command.ICommand;
-import com.shell.command.CommandChangeDirectory;
-import com.shell.command.CommandList;
-import com.shell.command.CommandPrintWorkDirectory;
+import com.shell.command.*;
 
 import java.io.*;
 import java.util.*;
@@ -22,10 +19,10 @@ public class Parser implements IParser {
     public ICommand parse(String line) throws IOException {//解析命令
         String[] words = line.split(" ");
         wordList = new ArrayList<String>(Arrays.asList(words));
-        String cmd = wordList.remove(0);
-        List<String> args = parseArgs();
-        InputStream input = parseInputReDirection();
-        OutputStream output = parseOutPutReDirection();
+        String cmd = wordList.get(0);
+        CmdLineArgs args = parseArgs();
+        InputStream input = parseInputReDirection(args);
+        OutputStream output = parseOutPutReDirection(args);
 
         ICommand command = null;
         switch (cmd) {
@@ -45,70 +42,61 @@ public class Parser implements IParser {
         return command;
     }
 
-    private List<String> parseArgs() {//解析参数
-        List<String> argList = new ArrayList<String>();
+    private CmdLineArgs parseArgs() {//解析参数
+        CmdLineArgs args = new CmdLineArgs();
         for (int i = 0; i < wordList.size(); i++) {
             String s = wordList.get(i);
-            if (s.startsWith("-")) {
-                argList.add(s);
-                wordList.remove(i);
-            }
+            if (s.matches("-[a-zA-Z]"))
+                args.singleArg.add(s);
+            else if (">".equals(s))
+                args.redirectOutputArg = Optional.ofNullable(wordList.get(i + 1));
+
+            else if ("<".equals(s))
+                args.redirectInputArg = Optional.ofNullable(wordList.get(i + 1));
+            else if(s.startsWith("-"))
+                args.mapArg.put(s, wordList.get(i + 1));
         }
-        return argList;
+        return args;
+
     }
 
-    private OutputStream parseOutPutReDirection() throws IOException {//解析输出模式
+    private OutputStream parseOutPutReDirection(CmdLineArgs args) throws IOException {//解析输出模式
         //设置输出设备，默认为0---控制台
-        for (int i = 0; i < wordList.size(); i++) {
-            String s = wordList.get(i);
-            if (s.equals(">")) {
-                File f = new File(wordList.get(i + 1));
-                if (f.exists())
-                    f.delete();
-                f.createNewFile();
-                wordList.remove(i);
-                wordList.remove(i + 1);
-                return new FileOutputStream(f);
-            } else if (s.equals(">>")) {
-                File f = new File(wordList.get(i + 1));
-                if (!f.exists())
-                    f.createNewFile();
-                wordList.remove(i);
-                wordList.remove(i + 1);
-                return new FileOutputStream(f);
-            }
+        if (args.redirectOutputArg.isPresent()) {
+            File f = new File(args.redirectOutputArg.get());
+            if (f.exists())
+                f.delete();
+            f.createNewFile();
+            return new FileOutputStream(f);
+//        } else if () {
+//            File f = new File();
+//            if (!f.exists())
+//                f.createNewFile();
+//            return new FileOutputStream(f);
         }
+
         return System.out;
     }
 
-    private InputStream parseInputReDirection() throws IOException {
-        for (int i = 0; i < wordList.size(); i++) {
-            String s = wordList.get(i);
-            if (s.equals("<")) {
-                File f = new File(wordList.get(i + 1));
-                if (f.exists())
-                    f.delete();
-                f.createNewFile();
-                wordList.remove(i);
-                wordList.remove(i + 1);
-                return new FileInputStream(f);
-            }
+    private InputStream parseInputReDirection(CmdLineArgs args) throws IOException {
+        if (args.redirectInputArg.isPresent()) {
+            File f = new File(args.redirectInputArg.get());
+            if (f.exists())
+                f.delete();
+            f.createNewFile();
+            return new FileInputStream(f);
         }
         return null;
     }
 
-    public static List<File> parseDirectory() {//解析文件夹（工具命令）
-        List<File> fileList = new ArrayList<>();
-        File f;
-        for (int i = 0; i < wordList.size(); i++) {
-            String filename = wordList.get(i);
-            f = new File(filename);
-            if (f.exists()) {
-                fileList.add(f);
-                wordList.remove(i);
-            }
-        }
-        return fileList;
+    public static class CmdLineArgs {
+        public Map<String, String> mapArg = new HashMap<>();
+        public List<String> singleArg = new ArrayList<>();
+        public Optional<String> redirectOutputArg = Optional.empty();
+        public Optional<String> redirectInputArg = Optional.empty();
+
     }
 }
+
+
 
