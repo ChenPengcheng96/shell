@@ -1,33 +1,36 @@
 package com.shell;
 
-import com.shell.command.CD;
-import com.shell.command.Command;
-import com.shell.command.LS;
-import com.shell.command.PWD;
+import com.shell.command.ICommand;
+import com.shell.parser.IParser;
 import com.shell.parser.Parser;
-import com.shell.io.Receiver;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.InputStreamReader;
 
 public class Shell {
     private  File dir = new File("");
-    static private  Map<String, ? super Command> cmdMap = new HashMap<>();
+    private static ICommand command;
 
-    public static Map<String, ? super Command> getCmdMap() {
-        return cmdMap;
+    public static void main(String[] args) throws IOException {
+        Shell shell = new Shell();
+        IParser parser = new Parser(shell);
+        while (true) {
+            String line = shell.receive();
+            command = parser.parse(line);
+            command.run();
+        }
     }
 
-    protected void addCommand(Command c) {
-        cmdMap.put(c.getCommandName(),c);
+    private void showPrompt() {
+        System.out.print(dir.getAbsolutePath() + ">>");
     }
 
-    private Shell() {
-        addCommand(new CD());
-        addCommand(new LS());
-        addCommand(new PWD());
+    private String receive() throws IOException {
+        showPrompt();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        return br.readLine().trim();
     }
 
     public File getDir() {
@@ -36,23 +39,5 @@ public class Shell {
 
     public void setDir(File dir) {
         this.dir = dir.getAbsoluteFile();
-    }
-
-    private  void showPrompt() {
-        System.out.print(dir.getAbsolutePath() + ">>");
-    }
-
-    //1、等待用户输入命令，按回车执行
-    //2、将命令解析
-    //3、执行命令
-    public static void main(String[] args) throws IOException {
-        Shell shell = new Shell();
-        while (true) {
-            shell.showPrompt();
-            String s = new Receiver().getCmdLine();
-            Command command = new Parser(s).parse();
-            if (command != null)
-                command.run(shell);
-        }
     }
 }
