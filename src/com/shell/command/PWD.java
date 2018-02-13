@@ -1,6 +1,6 @@
-package myCommand;
+package com.shell.command;
 
-import main.Shell;
+import com.shell.Shell;
 
 import java.io.IOException;
 

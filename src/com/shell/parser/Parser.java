@@ -1,6 +1,7 @@
-package main;
+package com.shell.parser;
 
-import myCommand.Command;
+import com.shell.command.Command;
+import com.shell.Shell;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +16,7 @@ public class Parser {
     private static Command command;//用于解析器返回的命令对象
     private static List<String> wordList;//命令行字符串数组
 
-    Parser(String cmdLine) {
+    public Parser(String cmdLine) {
         String[] words = cmdLine.split(" ");
         wordList = new ArrayList<String>(Arrays.asList(words));
     }

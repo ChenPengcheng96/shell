@@ -1,9 +1,11 @@
-package main;
+package com.shell;
 
-import myCommand.CD;
-import myCommand.Command;
-import myCommand.LS;
-import myCommand.PWD;
+import com.shell.command.CD;
+import com.shell.command.Command;
+import com.shell.command.LS;
+import com.shell.command.PWD;
+import com.shell.parser.Parser;
+import com.shell.io.Receiver;
 
 import java.io.File;
 import java.io.IOException;

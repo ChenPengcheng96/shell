@@ -1,7 +1,7 @@
-package myCommand;
+package com.shell.command;
 
-import main.Parser;
-import main.Shell;
+import com.shell.parser.Parser;
+import com.shell.Shell;
 
 import java.io.File;
 import java.io.IOException;
