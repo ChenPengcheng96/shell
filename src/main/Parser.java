@@ -11,6 +11,7 @@ import java.util.List;
 //命令解析器
 //1、解析命令
 public class Parser {
+    private Shell shell;
     private static Command command;//用于解析器返回的命令对象
     private static List<String> wordList;//命令行字符串数组
 
@@ -31,7 +32,6 @@ public class Parser {
         command = (Command) Shell.getCmdMap().get(cmd);//获取具体命令实例对象
         if (command == null) //检查有无此命令
             System.out.println("'" + cmd + "'" + "不是外部命令，也不是可运行的程序或批处理文件。");
-        command.setCmd(cmd);
     }
 
     private void parseParas() {//解析参数

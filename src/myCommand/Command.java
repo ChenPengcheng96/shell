@@ -1,18 +1,23 @@
 package myCommand;
 
+import main.Shell;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
 public abstract class Command {
+    private Shell shell;
     private static final String SEPARATOR = System.lineSeparator();
-    private String cmd;
+    private String commandName;
     private List<String> paras;
     private File rdFile;//重定向文件夹
     private int mode = 0;
 
-    public abstract void run() throws IOException;
+    public abstract void run(Shell shell) throws IOException;
+
+    public abstract String getCommandName();
 
     public File getRdFile() {
         return rdFile;
@@ -23,6 +28,7 @@ public abstract class Command {
     }
 
     void println(String info) throws IOException {
+
         if (mode == 0)
             System.out.println(info);
         if (mode == 1 || mode == 2) {
@@ -50,14 +56,6 @@ public abstract class Command {
         this.mode = mode;
     }
 
-    public String getCmd() {
-        return cmd;
-
-    }
-
-    public void setCmd(String cmd) {
-        this.cmd = cmd;
-    }
 
     public List<String> getParas() {
         return paras;

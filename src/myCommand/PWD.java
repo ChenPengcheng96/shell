@@ -5,8 +5,12 @@ import main.Shell;
 import java.io.IOException;
 
 public class PWD extends Command {
-    public void run() throws IOException {
-        String info = Shell.getDir().getAbsolutePath();
-        print(info);
+    public String getCommandName(){
+        return "pwd";
+    }
+
+    public void run(Shell shell) throws IOException {
+        String info = shell.getDir().getAbsolutePath();
+        println(info);
     }
 }

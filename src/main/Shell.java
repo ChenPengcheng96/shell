@@ -11,30 +11,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Shell {
-    private static File dir = new File("");
-    private static Map<String, ? super Command> cmdMap = new HashMap<>();
+    private  File dir = new File("");
+    static private  Map<String, ? super Command> cmdMap = new HashMap<>();
 
     public static Map<String, ? super Command> getCmdMap() {
         return cmdMap;
     }
 
-    private Shell() {
-        //建立命令映射表
-        cmdMap.put("cd", new CD());
-        cmdMap.put("ls", new LS());
-        cmdMap.put("pwd", new PWD());
-
+    protected void addCommand(Command c) {
+        cmdMap.put(c.getCommandName(),c);
     }
 
-    public static File getDir() {
+    private Shell() {
+        addCommand(new CD());
+        addCommand(new LS());
+        addCommand(new PWD());
+    }
+
+    public File getDir() {
         return dir.getAbsoluteFile();
     }
 
-    public static void setDir(File dir) {
-        Shell.dir = dir.getAbsoluteFile();
+    public void setDir(File dir) {
+        this.dir = dir.getAbsoluteFile();
     }
 
-    private static void showPrompt() {
+    private  void showPrompt() {
         System.out.print(dir.getAbsolutePath() + ">>");
     }
 
@@ -42,13 +44,13 @@ public class Shell {
     //2、将命令解析
     //3、执行命令
     public static void main(String[] args) throws IOException {
-        new Shell();
+        Shell shell = new Shell();
         while (true) {
-            showPrompt();
+            shell.showPrompt();
             String s = new Receiver().getCmdLine();
             Command command = new Parser(s).parse();
             if (command != null)
-                command.run();
+                command.run(shell);
         }
     }
 }
