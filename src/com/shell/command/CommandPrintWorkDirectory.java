@@ -21,6 +21,10 @@ public class CommandPrintWorkDirectory extends SingleCommand {
     }
 
     public void run() throws IOException {
+        if(!getArgs().directory.isEmpty()) {
+            System.out.println("命令'" + getCommandName() + "'用法错误");
+            return;
+        }
         String info = getShell().getDir().getAbsolutePath() + "\n";
         getOutput().write(info.getBytes());
     }

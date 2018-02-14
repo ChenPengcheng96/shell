@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
 public class CommandChangeDirectory extends SingleCommand {
     private static final String COMMAND_NAME = "cd";
 
@@ -23,19 +22,24 @@ public class CommandChangeDirectory extends SingleCommand {
     }
 
     public void run() throws IOException {
-//        getShell().getDir().getPath() args
         File file = null;
-        for(String s:getArgs().singleArg){
-            if(!s.startsWith("-"))
-                if(s.equals("."))
-                    s = getShell().getDir().getCanonicalPath();
-                if(s.equals(".."))
-                    s = getShell().getDir().getParent();
-                if(s != null)
-                    file = new File(s);
+        if(getArgs().directory.size()>1) {
+            System.out.println("命令'" + getCommandName() + "'用法错误");
+            return;
         }
-        if (file == null)
-            return;//没有指定文件夹则在当前文件夹
+        String s = getArgs().directory.get(0);
+        if (s.equals("."))
+            s = getShell().getDir().getCanonicalPath();
+        else if (s.equals(".."))
+            s = getShell().getDir().getParent();
+        else if(!s.matches("[a-zA-Z]:.*?"))
+            s = getShell().getDir().getCanonicalPath()+"\\"+s;
+        file = new File(s);
+        if(!file.exists()){
+            System.out.println("文件不存在");
+            return;
+        }
+
         getShell().setDir(file.getCanonicalFile());
     }
 

@@ -26,6 +26,9 @@ public class Parser implements IParser {
 
         ICommand command = null;
         switch (cmd) {
+            case "":
+                command = null;
+                break;
             case "cd":
                 command = new CommandChangeDirectory(shell, args, input, output);
                 break;
@@ -44,26 +47,31 @@ public class Parser implements IParser {
 
     private CmdLineArgs parseArgs() {//解析参数
         CmdLineArgs args = new CmdLineArgs();
-        for (int i = 0; i < wordList.size(); i++) {
+        for (int i = 1; i < wordList.size(); i++) {
             String s = wordList.get(i);
-            if (s.matches("-[a-zA-Z]"))
-                args.singleArg.add(s);
+            if (s.matches("--[a-zA-Z]+"))
+                args.mapArg.put(s, wordList.get(++i));
             else if (">".equals(s))
-                args.redirectOutputArg = Optional.ofNullable(wordList.get(i + 1));
-
+                args.redirectOutputArg = Optional.ofNullable(wordList.get(++i));
             else if ("<".equals(s))
-                args.redirectInputArg = Optional.ofNullable(wordList.get(i + 1));
-            else if(s.startsWith("-"))
-                args.mapArg.put(s, wordList.get(i + 1));
+                args.redirectInputArg = Optional.ofNullable(wordList.get(++i));
+            else if(s.startsWith("-")) {
+                char[] chars = s.toCharArray();
+                for (int j = 1; j < chars.length; j++)
+                    args.singleArg.add("-" + chars[j]);
+            }
+            else
+                args.directory.add(s);
         }
         return args;
-
     }
 
     private OutputStream parseOutPutReDirection(CmdLineArgs args) throws IOException {//解析输出模式
-        //设置输出设备，默认为0---控制台
         if (args.redirectOutputArg.isPresent()) {
-            File f = new File(args.redirectOutputArg.get());
+            String filename = args.redirectOutputArg.get();
+            if(!filename.matches("[a-zA-Z]:.*?"))
+                filename = shell.getDir().getCanonicalPath()+"\\"+filename;
+            File f = new File(filename);
             if (f.exists())
                 f.delete();
             f.createNewFile();
@@ -92,6 +100,7 @@ public class Parser implements IParser {
     public static class CmdLineArgs {
         public Map<String, String> mapArg = new HashMap<>();
         public List<String> singleArg = new ArrayList<>();
+        public List<String> directory = new ArrayList<>();
         public Optional<String> redirectOutputArg = Optional.empty();
         public Optional<String> redirectInputArg = Optional.empty();
 
