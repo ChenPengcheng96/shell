@@ -7,16 +7,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static java.lang.System.out;
-
 public abstract class SingleCommand implements ICommand {
     private Shell shell;
     private CmdLineArgs args;
     private InputStream input;
     private OutputStream output;
 
-    public SingleCommand(Shell shell, CmdLineArgs args,
-                         InputStream input, OutputStream output) {
+    SingleCommand(Shell shell, CmdLineArgs args,
+                  InputStream input, OutputStream output) {
         this.shell = shell;
         this.args = args;
         this.input = input;
@@ -44,19 +42,11 @@ public abstract class SingleCommand implements ICommand {
             }
     }
 
-    public void setShell(Shell shell) {
-        this.shell = shell;
-    }
-
-    public void setArgs(CmdLineArgs args) {
-        this.args = args;
-    }
-
     public void setInput(InputStream input) {
         this.input = input;
     }
 
-    public InputStream getInput() {
+    InputStream getInput() {
         return input;
     }
 
@@ -64,11 +54,11 @@ public abstract class SingleCommand implements ICommand {
         return shell;
     }
 
-    public CmdLineArgs getArgs() {
+    CmdLineArgs getArgs() {
         return args;
     }
 
-    public OutputStream getOutput() {
+    OutputStream getOutput() {
         return output;
     }
     public void setOutput(OutputStream output) {

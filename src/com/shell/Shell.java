@@ -11,15 +11,13 @@ import java.io.InputStreamReader;
 
 public class Shell {
     private  File dir = new File("");
-    private static ICommand command;
-
     public static void main(String[] args) throws IOException {
         Shell shell = new Shell();
         IParser parser = new Parser(shell);
         while (true) {
             String line = shell.receive();
-            command = parser.parse(line);
-            if(command!=null) {
+            ICommand command = parser.parse(line);
+            if(command !=null) {
                 try {
                     command.run();
                 } finally {

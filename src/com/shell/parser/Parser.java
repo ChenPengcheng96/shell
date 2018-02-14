@@ -20,7 +20,7 @@ public class Parser implements IParser {
         List<List<String>> commandLines = new ArrayList<>();
         splitCommandLines(line,commandLines);
         if(commandLines.size()>1) {
-            List<SingleCommand> commandList = new ArrayList<SingleCommand>();
+            List<SingleCommand> commandList = new ArrayList<>();
             for(List<String> wordList:commandLines){
                 SingleCommand cmd = parseSingleCommand(wordList);
                 commandList.add(cmd);
@@ -40,7 +40,7 @@ public class Parser implements IParser {
             commandLines.add(list);
         }
     }
-    public SingleCommand parseSingleCommand(List<String> wordList) throws IOException {//解析命令
+    private SingleCommand parseSingleCommand(List<String> wordList) throws IOException {//解析命令
         String cmd = wordList.get(0);
         CmdLineArgs args = parseArgs(wordList);
         InputStream input = parseInputReDirection(args);

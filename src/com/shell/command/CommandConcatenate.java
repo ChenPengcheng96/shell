@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.List;
 
 public class CommandConcatenate extends SingleCommand{
-    public static final String COMMAND_NAME = "cat";
+    private static final String COMMAND_NAME = "cat";
     public CommandConcatenate(Shell shell, Parser.CmdLineArgs args,
                               InputStream input, OutputStream output){
         super(shell,args,input,output);
@@ -27,7 +27,7 @@ public class CommandConcatenate extends SingleCommand{
         }
         BufferedReader bf = new BufferedReader(new InputStreamReader(getInput()));
         OutputStream output = getOutput();
-        String s = null;
+        String s;
         while((s = bf.readLine())!=null){
             output.write((s+"\n").getBytes());
             if(s.trim().equals("") )

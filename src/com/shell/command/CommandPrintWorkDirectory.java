@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class CommandPrintWorkDirectory extends SingleCommand {
-    public static final String COMMAND_NAME = "pwd";
+    private static final String COMMAND_NAME = "pwd";
 
     public CommandPrintWorkDirectory(Shell shell, CmdLineArgs args,
                                      InputStream input, OutputStream output) {

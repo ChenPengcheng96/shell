@@ -1,8 +1,0 @@
-4096      	Feb 14 18:23	.git
-4096      	Feb 14 18:23	.idea
-0         	Feb 14 18:24	123.txt
-0         	Feb 08 21:22	out
-996       	Feb 07 22:11	README.md
-423       	Feb 07 20:29	Shell.iml
-4096      	Feb 14 11:02	src
-
