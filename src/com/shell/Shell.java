@@ -19,8 +19,14 @@ public class Shell {
         while (true) {
             String line = shell.receive();
             command = parser.parse(line);
-            if(command!=null)
-                command.run();
+            if(command!=null) {
+                try {
+                    command.run();
+                } finally {
+                    command.destory();
+                }
+            }
+
         }
     }
 

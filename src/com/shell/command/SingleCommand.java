@@ -6,7 +6,8 @@ import com.shell.parser.Parser.CmdLineArgs;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
+
+import static java.lang.System.out;
 
 public abstract class SingleCommand implements ICommand {
     private Shell shell;
@@ -27,6 +28,22 @@ public abstract class SingleCommand implements ICommand {
     @Override
     public abstract void run() throws IOException;
 
+    public void destory() {
+        if(!output.equals(System.out)) {
+            try {
+                output.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if(!input.equals(System.in))
+            try {
+                input.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+    }
+
     public void setShell(Shell shell) {
         this.shell = shell;
     }
@@ -39,8 +56,8 @@ public abstract class SingleCommand implements ICommand {
         this.input = input;
     }
 
-    public void setOutput(OutputStream output) {
-        this.output = output;
+    public InputStream getInput() {
+        return input;
     }
 
     public Shell getShell() {
@@ -53,6 +70,9 @@ public abstract class SingleCommand implements ICommand {
 
     public OutputStream getOutput() {
         return output;
+    }
+    public void setOutput(OutputStream output) {
+        this.output = output;
     }
 
 }

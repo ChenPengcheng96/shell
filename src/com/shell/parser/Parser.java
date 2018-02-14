@@ -38,6 +38,9 @@ public class Parser implements IParser {
             case "ls":
                 command = new CommandList(shell, args, input, output);
                 break;
+            case "cat":
+                command = new CommandConcatenate(shell, args, input, output);
+                break;
             default:
                 System.out.println("'" + cmd + "'" + "不是外部命令，也不是可运行的程序或批处理文件。");
                 break;
@@ -94,7 +97,7 @@ public class Parser implements IParser {
             f.createNewFile();
             return new FileInputStream(f);
         }
-        return null;
+        return System.in;
     }
 
     public static class CmdLineArgs {
