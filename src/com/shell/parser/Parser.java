@@ -9,22 +9,43 @@ import java.util.*;
 //命令解析器
 //1、解析命令
 public class Parser implements IParser {
-    private static List<String> wordList;//命令行字符串数组
     private Shell shell;
 
     public Parser(Shell shell) {
         this.shell = shell;
     }
 
-    public ICommand parse(String line) throws IOException {//解析命令
-        String[] words = line.split(" ");
-        wordList = new ArrayList<String>(Arrays.asList(words));
+    @Override
+    public ICommand parse(String line) throws IOException {
+        List<List<String>> commandLines = new ArrayList<>();
+        splitCommandLines(line,commandLines);
+        if(commandLines.size()>1) {
+            List<SingleCommand> commandList = new ArrayList<SingleCommand>();
+            for(List<String> wordList:commandLines){
+                SingleCommand cmd = parseSingleCommand(wordList);
+                commandList.add(cmd);
+            }
+            return new PipedCommand(commandList);
+        }
+        else
+            return parseSingleCommand(commandLines.get(0));
+
+    }
+
+
+    private void splitCommandLines(String line,List<List<String>> commandLines){
+        String[] strs = line.split("\\|");
+        for(String s:strs){
+            List<String> list = new ArrayList<>(Arrays.asList(s.trim().split(" ")));
+            commandLines.add(list);
+        }
+    }
+    public SingleCommand parseSingleCommand(List<String> wordList) throws IOException {//解析命令
         String cmd = wordList.get(0);
-        CmdLineArgs args = parseArgs();
+        CmdLineArgs args = parseArgs(wordList);
         InputStream input = parseInputReDirection(args);
         OutputStream output = parseOutPutReDirection(args);
-
-        ICommand command = null;
+        SingleCommand command = null;
         switch (cmd) {
             case "":
                 command = null;
@@ -48,7 +69,7 @@ public class Parser implements IParser {
         return command;
     }
 
-    private CmdLineArgs parseArgs() {//解析参数
+    private CmdLineArgs parseArgs(List<String> wordList) {//解析参数
         CmdLineArgs args = new CmdLineArgs();
         for (int i = 1; i < wordList.size(); i++) {
             String s = wordList.get(i);
@@ -72,20 +93,14 @@ public class Parser implements IParser {
     private OutputStream parseOutPutReDirection(CmdLineArgs args) throws IOException {//解析输出模式
         if (args.redirectOutputArg.isPresent()) {
             String filename = args.redirectOutputArg.get();
-            if(!filename.matches("[a-zA-Z]:.*?"))
-                filename = shell.getDir().getCanonicalPath()+"\\"+filename;
+            if (!filename.matches("[a-zA-Z]:.*?"))
+                filename = shell.getDir().getCanonicalPath() + "\\" + filename;
             File f = new File(filename);
             if (f.exists())
                 f.delete();
             f.createNewFile();
             return new FileOutputStream(f);
-//        } else if () {
-//            File f = new File();
-//            if (!f.exists())
-//                f.createNewFile();
-//            return new FileOutputStream(f);
         }
-
         return System.out;
     }
 

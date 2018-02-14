@@ -30,6 +30,8 @@ public class CommandConcatenate extends SingleCommand{
         String s = null;
         while((s = bf.readLine())!=null){
             output.write((s+"\n").getBytes());
+            if(s.trim().equals("") )
+                break;
         }
     }
 }

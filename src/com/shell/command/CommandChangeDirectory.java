@@ -27,19 +27,21 @@ public class CommandChangeDirectory extends SingleCommand {
             System.out.println("命令'" + getCommandName() + "'用法错误");
             return;
         }
-        String s = getArgs().directory.get(0);
-        if (s.equals("."))
-            s = getShell().getDir().getCanonicalPath();
-        else if (s.equals(".."))
-            s = getShell().getDir().getParent();
-        else if(!s.matches("[a-zA-Z]:.*?"))
-            s = getShell().getDir().getCanonicalPath()+"\\"+s;
-        file = new File(s);
+        String s = null;
+        if(!getArgs().directory.isEmpty()) {
+            s = getArgs().directory.get(0);
+            if (s.equals("."))
+                s = getShell().getDir().getCanonicalPath();
+            else if (s.equals(".."))
+                s = getShell().getDir().getParent();
+            else if (!s.matches("[a-zA-Z]:.*?"))
+                s = getShell().getDir().getCanonicalPath() + "\\" + s;
+        }
+        file = new File(s==null?getShell().getDir().getAbsolutePath():s);
         if(!file.exists()){
             System.out.println("文件不存在");
             return;
         }
-
         getShell().setDir(file.getCanonicalFile());
     }
 
