@@ -59,7 +59,7 @@ public class PipedCommandTest {
     }
 
     /**
-     * Method: destory()
+     * Method: destroy()
      */
     @Test
     public void testDestory() throws Exception {

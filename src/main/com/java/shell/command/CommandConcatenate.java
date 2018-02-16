@@ -19,19 +19,45 @@ public class CommandConcatenate extends SingleCommand{
     }
 
     @Override
-    public void run() throws IOException {
-        List<String> filenames = getArgs().directory;
-        if(filenames.size() == 1){
-            File file = new File(filenames.get(0));
-            setInput(new FileInputStream(file));
+    public int run(){
+        List<String> filenames = getArgs().parameter;
+        // TODO: support multiple file
+        if(filenames.size()>0){
+            for (int i = 0; i < filenames.size(); i++) {
+                String filename = filenames.get(i);
+                copyToInputStream(filename);
+                pasteToOutputStream();
+            }
         }
+        else
+            pasteToOutputStream();
+        return 0;
+    }
+
+    private void copyToInputStream(String filename){//将文件中内容拷贝到cat的输入流中
+        File file;
+        file = new File(filename);
+        try {
+            setInput(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            System.err.println("文件不存在");
+        }
+    }
+
+    private void pasteToOutputStream(){
         BufferedReader bf = new BufferedReader(new InputStreamReader(getInput()));
         OutputStream output = getOutput();
-        String s;
-        while((s = bf.readLine())!=null){
-            output.write((s+"\n").getBytes());
-            if(s.trim().equals("") )
-                break;
-        }
+        String s = null;
+        do {
+            try {
+                s = bf.readLine();
+                output.write(s.getBytes());
+                output.write("\n".getBytes());
+                if(s.trim().equals("") )
+                    break;
+            } catch (IOException e) {
+                System.err.println("文件不存在");
+            }
+        }while (s != null);
     }
 }

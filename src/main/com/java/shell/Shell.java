@@ -21,14 +21,18 @@ public class Shell {
                 try {
                     command.run();
                 } finally {
-                    command.destory();
+                    command.destroy();
                 }
             }
         }
     }
 
     private void showPrompt() {
-        System.out.print(dir.getAbsolutePath() + ">>");
+        try {
+            System.out.print(dir.getCanonicalPath() + ">>");
+        } catch (IOException e) {
+            System.err.println("无规范文件名查询系统");
+        }
     }
 
     private String receive() throws IOException {

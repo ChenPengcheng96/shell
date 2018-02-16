@@ -20,12 +20,17 @@ public class CommandPrintWorkDirectory extends SingleCommand {
         return COMMAND_NAME;
     }
 
-    public void run() throws IOException {
-        if(!getArgs().directory.isEmpty()) {
+    public int run(){
+        if(!getArgs().parameter.isEmpty()) {
             System.out.println("命令'" + getCommandName() + "'用法错误");
-            return;
+            return 1;
         }
         String info = getShell().getDir().getAbsolutePath() + "\n";
-        getOutput().write(info.getBytes());
+        try {
+            getOutput().write(info.getBytes());
+        } catch (IOException e) {
+            System.err.println("写入异常");
+        }
+        return 0;
     }
 }

@@ -51,7 +51,7 @@ public class CommandConcatenateTest {
         File file = new File(filename);
         file.createNewFile();
         directoryList.add(filename);
-        args.setDirectory(directoryList);
+        args.setParameter(directoryList);
         PrintWriter pw = new PrintWriter(filename,"utf-8");
         pw.print("Hello,World");
         pw.close();

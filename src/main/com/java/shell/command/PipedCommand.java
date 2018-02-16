@@ -11,30 +11,26 @@ public class PipedCommand implements ICommand{
     }
 
     @Override
-    public void run() throws IOException {
+    public int run(){
         for (int i = 0; i < commands.size(); i++) {
             PipedOutputStream pos = new PipedOutputStream();
             commands.get(i).setOutput(pos);
-            PipedInputStream pis = new PipedInputStream(pos);
+            PipedInputStream pis = null;
+            try {
+                pis = new PipedInputStream(pos);
+            } catch (IOException e) {
+                System.err.println("管道连接异常");
+            }
             commands.get(++i).setInput(pis);
         }
         for(SingleCommand c:commands){
             c.run();
-            c.destory();
+            c.destroy();
         }
+        return 0;
     }
 
     @Override
-    public void destory() {}
+    public void destroy() {}
 
-    public static void main(String[] args) throws IOException {
-        PipedOutputStream os = new PipedOutputStream();
-        PipedInputStream is = new PipedInputStream(os);
-        //os.connect(is);
-        String s = "Hello";
-        os.write(s.getBytes());
-        byte[] b = new byte[100];
-        is.read(b, 0, 100);
-        System.out.println(new String(b));
-    }
 }

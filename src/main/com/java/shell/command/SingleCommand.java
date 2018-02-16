@@ -24,16 +24,19 @@ public abstract class SingleCommand implements ICommand {
     public abstract String getCommandName();
 
     @Override
-    public abstract void run() throws IOException;
+    public abstract int run();
 
-    public void destory() {
+    public void destroy() {
+        // TODO: extract these to a function
+        // close(input);
+        // close(output);
         if(output == null)
             return;
         if(!output.equals(System.out)) {
             try {
                 output.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("流关闭失败");
             }
         }
         if(input == null)

@@ -74,7 +74,7 @@ public class Parser implements IParser {
         for (int i = 1; i < wordList.size(); i++) {
             String s = wordList.get(i);
             if (s.matches("--[a-zA-Z]+"))
-                args.mapArg.put(s, wordList.get(++i));
+                args.optionWithValue.put(s, wordList.get(++i));
             else if (">".equals(s))
                 args.redirectOutputArg = Optional.ofNullable(wordList.get(++i));
             else if ("<".equals(s))
@@ -82,10 +82,10 @@ public class Parser implements IParser {
             else if(s.startsWith("-")) {
                 char[] chars = s.toCharArray();
                 for (int j = 1; j < chars.length; j++)
-                    args.singleArg.add("-" + chars[j]);
+                    args.optionWithoutValue.add("-" + chars[j]);
             }
             else
-                args.directory.add(s);
+                args.parameter.add(s);
         }
         return args;
     }
@@ -116,34 +116,38 @@ public class Parser implements IParser {
     }
 
     public static class CmdLineArgs {
-        public Map<String, String> mapArg = new HashMap<>();
-        public List<String> singleArg = new ArrayList<>();
-        public List<String> directory = new ArrayList<>();
+        // optionWithValue
+        public Map<String, String> optionWithValue = new HashMap<>();
+        // optionWithoutValue
+        public List<String> optionWithoutValue = new ArrayList<>();
+        // parameter
+        public List<String> parameter = new ArrayList<>();
         public Optional<String> redirectOutputArg = Optional.empty();
         public Optional<String> redirectInputArg = Optional.empty();
 
-        public Map<String, String> getMapArg() {
-            return mapArg;
+
+        public Map<String, String> getOptionWithValue() {
+            return optionWithValue;
         }
 
-        public void setMapArg(Map<String, String> mapArg) {
-            this.mapArg = mapArg;
+        public void setOptionWithValue(Map<String, String> optionWithValue) {
+            this.optionWithValue = optionWithValue;
         }
 
-        public List<String> getSingleArg() {
-            return singleArg;
+        public List<String> getOptionWithoutValue() {
+            return optionWithoutValue;
         }
 
-        public void setSingleArg(List<String> singleArg) {
-            this.singleArg = singleArg;
+        public void setOptionWithoutValue(List<String> optionWithoutValue) {
+            this.optionWithoutValue = optionWithoutValue;
         }
 
-        public List<String> getDirectory() {
-            return directory;
+        public List<String> getParameter() {
+            return parameter;
         }
 
-        public void setDirectory(List<String> directory) {
-            this.directory = directory;
+        public void setParameter(List<String> parameter) {
+            this.parameter = parameter;
         }
 
         public Optional<String> getRedirectOutputArg() {

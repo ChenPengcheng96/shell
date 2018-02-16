@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 public class CommandChangeDirectory extends SingleCommand {
     private static final String COMMAND_NAME = "cd";
@@ -21,28 +22,37 @@ public class CommandChangeDirectory extends SingleCommand {
         return COMMAND_NAME;
     }
 
-    public void run() throws IOException {
-        File file = null;
-        if(getArgs().directory.size()>1) {
-            System.out.println("命令'" + getCommandName() + "'用法错误");
-            return;
+    public int run() {
+        // TODO: support  cd ..\ABC
+        // current.getPath() + dir
+        // create File (C:\\ABC\\..BCD"
+        List<String> args = getArgs().parameter;
+        if (args.size() > 1) {
+            System.err.println("命令'" + getCommandName() + "'用法错误");
+            return 1;
         }
-        String s = null;
-        if(!getArgs().directory.isEmpty()) {
-            s = getArgs().directory.get(0);
-            if (s.equals("."))
-                s = getShell().getDir().getCanonicalPath();
-            else if (s.equals(".."))
-                s = getShell().getDir().getParent();
-            else if (!s.matches("[a-zA-Z]:.*?"))
-                s = getShell().getDir().getCanonicalPath() + "\\" + s;
+        String workDir;
+        try {
+            workDir = getShell().getDir().getCanonicalPath();
+        } catch (IOException e) {
+            System.err.println("无规范文件查询系统");
+            return 1;
         }
-        file = new File(s==null?getShell().getDir().getAbsolutePath():s);
-        if(!file.exists()){
-            System.out.println("文件不存在");
-            return;
-        }
-        getShell().setDir(file.getCanonicalFile());
-    }
 
+        if (!args.isEmpty()) {
+            String arg = args.get(0);
+            if (!arg.matches("[a-zA-Z]:.*?"))
+                workDir += "\\" + arg;
+            else
+                workDir = arg;
+        }
+        File file = new File(workDir);
+
+        if (!file.exists()) {
+            System.err.println("文件不存在");
+            return 1;
+        }
+        getShell().setDir(file);
+        return 0;
+    }
 }

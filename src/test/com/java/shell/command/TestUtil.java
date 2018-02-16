@@ -36,7 +36,7 @@ public class TestUtil {
         if(!directory.exists())
             directory.mkdir();
         if(!directory.isDirectory())
-            throw new RuntimeException(directory + " not a directory");
+            throw new RuntimeException(directory + " not a parameter");
         File dir = new File(directory + "\\dir1\\dir2");
         dir.mkdirs();
         new File(dir,"file.txt").createNewFile();

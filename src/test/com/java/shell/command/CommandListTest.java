@@ -59,7 +59,7 @@ public class CommandListTest {
     public void testListCurrentDirectory() throws Exception {
 //TODO: Test goes here...
         Parser.CmdLineArgs args = new Parser.CmdLineArgs();
-        args.setDirectory(new ArrayList<>());
+        args.setParameter(new ArrayList<>());
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         CommandList cmd = new CommandList(shell, args, null, output);
         String expected = "dir1";
@@ -72,10 +72,10 @@ public class CommandListTest {
     public void testListWithA() throws Exception {
 //TODO: Test goes here...
         Parser.CmdLineArgs args = new Parser.CmdLineArgs();
-        args.setDirectory(new ArrayList<>());
+        args.setParameter(new ArrayList<>());
         ArrayList<String> singleArg = new ArrayList<>();
         singleArg.add("-a");
-        args.setSingleArg(singleArg);
+        args.setOptionWithoutValue(singleArg);
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         CommandList cmd = new CommandList(shell, args, null, output);
         String expected = "dir1\tdir1Hidden";
@@ -88,10 +88,10 @@ public class CommandListTest {
     public void testListWithL() throws Exception {
 //TODO: Test goes here...
         Parser.CmdLineArgs args = new Parser.CmdLineArgs();
-        args.setDirectory(new ArrayList<>());
+        args.setParameter(new ArrayList<>());
         ArrayList<String> singleArg = new ArrayList<>();
         singleArg.add("-l");
-        args.setSingleArg(singleArg);
+        args.setOptionWithoutValue(singleArg);
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         CommandList cmd = new CommandList(shell, args, null, output);
         String expected = "0dir1";
@@ -105,11 +105,11 @@ public class CommandListTest {
     public void testListWithAL() throws Exception {
 //TODO: Test goes here...
         Parser.CmdLineArgs args = new Parser.CmdLineArgs();
-        args.setDirectory(new ArrayList<>());
+        args.setParameter(new ArrayList<>());
         ArrayList<String> singleArg = new ArrayList<>();
         singleArg.add("-a");
         singleArg.add("-l");
-        args.setSingleArg(singleArg);
+        args.setOptionWithoutValue(singleArg);
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         CommandList cmd = new CommandList(shell, args, null, output);
         String regex = "\\s+[A-Z][a-z][a-z] \\d\\d \\d\\d:\\d\\d\\s+";
