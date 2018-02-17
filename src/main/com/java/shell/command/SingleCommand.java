@@ -3,6 +3,7 @@ package com.java.shell.command;
 import com.java.shell.Shell;
 import com.java.shell.parser.Parser;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,26 +28,20 @@ public abstract class SingleCommand implements ICommand {
     public abstract int run();
 
     public void destroy() {
-        // TODO: extract these to a function
-        // close(input);
-        // close(output);
-        if(output == null)
+        close(input);
+        close(output);
+    }
+
+    private void close(Closeable stream) {
+        if (stream == null)
             return;
-        if(!output.equals(System.out)) {
+        if (!stream.equals(System.out) && !stream.equals(System.in)) {
             try {
-                output.close();
+                stream.close();
             } catch (IOException e) {
                 System.err.println("流关闭失败");
             }
         }
-        if(input == null)
-            return;
-        if(!input.equals(System.in))
-            try {
-                input.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
     }
 
     public void setInput(InputStream input) {
@@ -68,8 +63,8 @@ public abstract class SingleCommand implements ICommand {
     OutputStream getOutput() {
         return output;
     }
+
     public void setOutput(OutputStream output) {
         this.output = output;
     }
-
 }

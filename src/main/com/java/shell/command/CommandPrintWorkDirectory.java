@@ -20,16 +20,29 @@ public class CommandPrintWorkDirectory extends SingleCommand {
         return COMMAND_NAME;
     }
 
-    public int run(){
-        if(!getArgs().parameter.isEmpty()) {
+    public int run() {
+        if (validValue() != 0)
+            return 1;
+        String info = getShell().getDir().getAbsolutePath() + "\n";
+        if (writeTo(info) != 0)
+            return 1;
+        return 0;
+    }
+
+    private int validValue() {
+        if (!getArgs().parameter.isEmpty()) {
             System.out.println("命令'" + getCommandName() + "'用法错误");
             return 1;
         }
-        String info = getShell().getDir().getAbsolutePath() + "\n";
+        return 0;
+    }
+
+    private int writeTo(String info) {
         try {
             getOutput().write(info.getBytes());
         } catch (IOException e) {
             System.err.println("写入异常");
+            return 1;
         }
         return 0;
     }

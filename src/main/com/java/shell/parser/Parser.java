@@ -90,9 +90,12 @@ public class Parser implements IParser {
         return args;
     }
 
-    private OutputStream parseOutPutReDirection(CmdLineArgs args) throws IOException {//解析输出模式
-        if (args.redirectOutputArg.isPresent()) {
-            String filename = args.redirectOutputArg.get();
+    // <T> parseRedirection（args, default）
+    private OutputStream parseOutPutReDirection(CmdLineArgs args) throws IOException {
+
+        Optional<String> reOut = args.redirectOutputArg;
+        if (reOut.isPresent()) {
+            String filename = reOut.get();
             if (!filename.matches("[a-zA-Z]:.*?"))
                 filename = shell.getDir().getCanonicalPath() + "\\" + filename;
             File f = new File(filename);
@@ -105,8 +108,9 @@ public class Parser implements IParser {
     }
 
     private InputStream parseInputReDirection(CmdLineArgs args) throws IOException {
-        if (args.redirectInputArg.isPresent()) {
-            File f = new File(args.redirectInputArg.get());
+        Optional<String> reIn = args.redirectInputArg;
+        if (reIn.isPresent()) {
+            File f = new File(reIn.get());
             if (f.exists())
                 f.delete();
             f.createNewFile();

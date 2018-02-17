@@ -20,11 +20,13 @@ public class CommandConcatenate extends SingleCommand{
 
     @Override
     public int run(){
+        //判断有效值
+        if(validValue() != 0)
+            return 1;
         List<String> filenames = getArgs().parameter;
-        // TODO: support multiple file
+        //连接流
         if(filenames.size()>0){
-            for (int i = 0; i < filenames.size(); i++) {
-                String filename = filenames.get(i);
+            for (String filename : filenames) {
                 copyToInputStream(filename);
                 pasteToOutputStream();
             }
@@ -59,5 +61,13 @@ public class CommandConcatenate extends SingleCommand{
                 System.err.println("文件不存在");
             }
         }while (s != null);
+    }
+
+    private int validValue(){
+        if(!getArgs().optionWithoutValue.isEmpty()){
+            System.err.println("参数错误");
+            return 1;
+        }
+        return 0;
     }
 }

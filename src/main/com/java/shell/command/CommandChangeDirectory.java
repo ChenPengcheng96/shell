@@ -22,37 +22,44 @@ public class CommandChangeDirectory extends SingleCommand {
         return COMMAND_NAME;
     }
 
+    // TODO: support  cd ..\ABC
+    // current.getPath() + dir
+    // create File (C:\\ABC\\..BCD"
+
+    // validArgs();
+    // getCurrentDir();
+    // getTargetDir();
+    // setDir();
     public int run() {
-        // TODO: support  cd ..\ABC
-        // current.getPath() + dir
-        // create File (C:\\ABC\\..BCD"
         List<String> args = getArgs().parameter;
+        if(validValue(args) != 0)
+            return 1;
+        String workDir;
+        if(!args.isEmpty()){
+            File file;
+            workDir = args.get(0);
+            //判断是否为绝对路径
+            if (!workDir.matches("[a-zA-Z]:.*?"))
+                file = new File(getShell().getDir(),workDir);
+            else
+                file = new File(workDir);
+            getShell().setDir(file);
+        }
+        return 0;
+    }
+
+    private int validValue(List<String> args){
         if (args.size() > 1) {
             System.err.println("命令'" + getCommandName() + "'用法错误");
             return 1;
         }
-        String workDir;
-        try {
-            workDir = getShell().getDir().getCanonicalPath();
-        } catch (IOException e) {
-            System.err.println("无规范文件查询系统");
-            return 1;
+        if(!args.isEmpty()){
+            String filename = args.get(0);
+            if (!new File(filename).exists()) {
+                System.err.println("文件不存在");
+                return 1;
+            }
         }
-
-        if (!args.isEmpty()) {
-            String arg = args.get(0);
-            if (!arg.matches("[a-zA-Z]:.*?"))
-                workDir += "\\" + arg;
-            else
-                workDir = arg;
-        }
-        File file = new File(workDir);
-
-        if (!file.exists()) {
-            System.err.println("文件不存在");
-            return 1;
-        }
-        getShell().setDir(file);
         return 0;
     }
 }

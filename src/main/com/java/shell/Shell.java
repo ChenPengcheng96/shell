@@ -10,14 +10,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Shell {
-    private  File dir = new File("");
+    private File dir = new File("");
+
     public static void main(String[] args) throws IOException {
         Shell shell = new Shell();
         IParser parser = new Parser(shell);
         while (true) {
             String line = shell.receive();
             ICommand command = parser.parse(line);
-            if(command !=null) {
+            if (command != null) {
                 try {
                     command.run();
                 } finally {
@@ -28,11 +29,8 @@ public class Shell {
     }
 
     private void showPrompt() {
-        try {
-            System.out.print(dir.getCanonicalPath() + ">>");
-        } catch (IOException e) {
-            System.err.println("无规范文件名查询系统");
-        }
+        System.out.print(getDir());
+        System.out.print(">>");
     }
 
     private String receive() throws IOException {
@@ -42,7 +40,12 @@ public class Shell {
     }
 
     public File getDir() {
-        return dir.getAbsoluteFile();
+        try {
+            return dir.getCanonicalFile();
+        } catch (IOException e) {
+            System.err.println("无规范文件名查询系统");
+        }
+        return null;
     }
 
     //public String getEnv(String key);
@@ -51,7 +54,6 @@ public class Shell {
     // echo $ABC
     // set ABC C:\Temp, cd $ABC
     // external command: java PATH
-
 
     public void setDir(File dir) {
         this.dir = dir.getAbsoluteFile();

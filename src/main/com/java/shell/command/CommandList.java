@@ -28,11 +28,38 @@ public class CommandList extends SingleCommand {
     //-a 当前文件夹所有文件（包括隐藏文件）
     //-l 当前文件夹详情文件信息
     public int run() {
-        //设置显示目录
+        //判断有效值
         List<String> paras = getArgs().parameter;
         File workDir = getShell().getDir();
-        if (paras.size() == 1){
+        List<String> optionWithoutValue = getArgs().optionWithoutValue;
+        if(validValue(paras,workDir,optionWithoutValue) != 0)
+            return 1;
+        //是否有指定目录
+        if(!paras.isEmpty())
             workDir = new File(paras.get(0));
+        //参数-a
+        File[] files;
+        if(optionWithoutValue.contains("-a"))
+            files = workDir.listFiles();
+        else
+            files = workDir.listFiles(pathname -> !pathname.isHidden());
+        //目录是否无文件
+        if(files == null){
+            return 0;
+        }
+        //参数-l
+        OutputStream output = getOutput();
+        if(optionWithoutValue.contains("-l")){
+            writeFileDetailedInfo(files,output);
+        }
+        else
+            writeFileNameInfo(files,output);
+        return 0;
+    }
+
+    private int validValue(List<String> paras,File workDir,List<String> optionWithoutValue){
+        //判断文件是否有效
+        if (paras.size() == 1){
             if(!workDir.exists()) {
                 System.err.println("文件不存在");
                 return 1;
@@ -40,57 +67,6 @@ public class CommandList extends SingleCommand {
         }
         else if(paras.size() > 1)
             System.err.println("命令'" + getCommandName() + "'用法错误");
-        // pathname-> true
-        //参数-a
-        List<String> optionWithoutValue = getArgs().optionWithoutValue;
-        File[] files;
-        if(optionWithoutValue.contains("-a"))
-            files = workDir.listFiles();
-        else
-            files = workDir.listFiles(pathname -> !pathname.isHidden());
-
-        //参数-l
-        if(files == null){
-            return 1;
-        }
-        OutputStream output = getOutput();
-        if(optionWithoutValue.contains("-l")){
-            for (File file : files) {
-                byte[] size = String.format("%-10d", file.length()).getBytes();
-                SimpleDateFormat sdf = new SimpleDateFormat("MMM dd HH:mm", Locale.ENGLISH);
-                byte[] time = sdf.format(new Date(file.lastModified())).getBytes();
-                byte[] filename = file.getName().getBytes();
-                try {
-                    output.write(size);
-                    output.write(time);
-                    output.write("\t".getBytes());
-                    output.write(filename);
-                    output.write("\n".getBytes());
-                } catch (IOException e) {
-                    System.err.println("I/O error");
-                }
-            }
-        }
-        //无参数-l
-        else{
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            double width = screenSize.getWidth();
-            int count = (int)width/400;
-            for (File file : files) {
-                // TODO: fit screen width
-                try {
-                    output.write(file.getName().getBytes());
-                    output.write("\t".getBytes());
-                    if (count-- == 0){
-                        output.write("\n".getBytes());
-                        count = (int)width/400;
-                    }
-                } catch (IOException e) {
-                    System.err.println("I/O error");
-                }
-            }
-        }
-
         //设置无值参数选项
         Set<String> option = new HashSet<>();
         option.add("-a");
@@ -100,8 +76,45 @@ public class CommandList extends SingleCommand {
             System.err.println("参数错误");
             return 1;
         }
-//        TODO: avoid +
         return 0;
     }
 
+    private void writeFileDetailedInfo(File[] files,OutputStream output){
+        for (File file : files) {
+            byte[] size = String.format("%-10d", file.length()).getBytes();
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd HH:mm", Locale.ENGLISH);
+            byte[] time = sdf.format(new Date(file.lastModified())).getBytes();
+            byte[] filename = file.getName().getBytes();
+            try {
+                output.write(size);
+                output.write(time);
+                output.write("\t".getBytes());
+                output.write(filename);
+                output.write("\n".getBytes());
+            } catch (IOException e) {
+                System.err.println("I/O error");
+            }
+        }
+    }
+
+    private void writeFileNameInfo(File[] files,OutputStream output){
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double width = screenSize.getWidth();
+        int num = (int)width/300;
+        int count = 1;
+        for (File file : files) {
+            // TODO: fit screen width
+            try {
+                output.write(file.getName().getBytes());
+                output.write("\t".getBytes());
+                if (count % num == 0 || count == files.length){
+                    output.write("\n".getBytes());
+                    count = num;
+                }
+                count++;
+            } catch (IOException e) {
+                System.err.println("I/O error");
+            }
+        }
+    }
 }
