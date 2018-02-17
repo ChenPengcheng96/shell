@@ -8,9 +8,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Shell {
     private File dir = new File("");
+    private Map<String,String> env = new HashMap<>();
+    public Shell(){
+        env = System.getenv();
+    }
 
     public static void main(String[] args) throws IOException {
         Shell shell = new Shell();
@@ -39,10 +45,19 @@ public class Shell {
         return br.readLine().trim();
     }
 
+    public Map<String,String> getEnv() {
+        return env;
+    }
+
+    public void setEnv(Map<String,String> env) {
+        this.env = env;
+    }
+
     public File getDir() {
         try {
             return dir.getCanonicalFile();
         } catch (IOException e) {
+
             System.err.println("无规范文件名查询系统");
         }
         return null;
@@ -52,6 +67,7 @@ public class Shell {
     //public String setEnv(String key, String value);
     // set command: set ABC 1
     // echo $ABC
+    // echo abc
     // set ABC C:\Temp, cd $ABC
     // external command: java PATH
 

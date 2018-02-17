@@ -5,5 +5,5 @@ import com.java.shell.command.ICommand;
 import java.io.IOException;
 
 public interface IParser {
-    ICommand parse(String line) throws IOException;
+    ICommand parse(String line);
 }

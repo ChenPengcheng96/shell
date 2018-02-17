@@ -60,36 +60,6 @@ public void testSetDir() throws Exception {
 @Test
 public void testShowPrompt() throws Exception { 
 //TODO: Test goes here... 
-/* 
-try { 
-   Method method = Shell.getClass().getMethod("showPrompt"); 
-   method.setAccessible(true); 
-   method.invoke(<Object>, <Parameters>); 
-} catch(NoSuchMethodException e) { 
-} catch(IllegalAccessException e) { 
-} catch(InvocationTargetException e) { 
-} 
-*/ 
-} 
 
-/** 
-* 
-* Method: receive() 
-* 
-*/ 
-@Test
-public void testReceive() throws Exception { 
-//TODO: Test goes here... 
-/* 
-try { 
-   Method method = Shell.getClass().getMethod("receive"); 
-   method.setAccessible(true); 
-   method.invoke(<Object>, <Parameters>); 
-} catch(NoSuchMethodException e) { 
-} catch(IllegalAccessException e) { 
-} catch(InvocationTargetException e) { 
-} 
-*/ 
-} 
-
-} 
+}
+}

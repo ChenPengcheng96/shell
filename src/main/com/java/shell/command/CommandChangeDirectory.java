@@ -20,15 +20,6 @@ public class CommandChangeDirectory extends SingleCommand {
     public String getCommandName() {
         return COMMAND_NAME;
     }
-
-    // TODO: support  cd ..\ABC
-    // current.getPath() + dir
-    // create File (C:\\ABC\\..BCD"
-
-    // validArgs();
-    // getCurrentDir();
-    // getTargetDir();
-    // setDir();
     public int run() {
         List<String> args = getArgs().parameter;
         if(validValue(args) != 0)
