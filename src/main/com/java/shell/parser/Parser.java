@@ -18,28 +18,27 @@ public class Parser implements IParser {
     @Override
     public ICommand parse(String line) throws IOException {
         List<List<String>> commandLines = new ArrayList<>();
-        splitCommandLines(line,commandLines);
-        if(commandLines.size()>1) {
+        splitCommandLines(line, commandLines);
+        if (commandLines.size() > 1) {
             List<SingleCommand> commandList = new ArrayList<>();
-            for(List<String> wordList:commandLines){
+            for (List<String> wordList : commandLines) {
                 SingleCommand cmd = parseSingleCommand(wordList);
                 commandList.add(cmd);
             }
             return new PipedCommand(commandList);
-        }
-        else
+        } else
             return parseSingleCommand(commandLines.get(0));
 
     }
 
-
-    private void splitCommandLines(String line,List<List<String>> commandLines){
+    private void splitCommandLines(String line, List<List<String>> commandLines) {
         String[] strs = line.split("\\|");
-        for(String s:strs){
+        for (String s : strs) {
             List<String> list = new ArrayList<>(Arrays.asList(s.trim().split(" ")));
             commandLines.add(list);
         }
     }
+
     private SingleCommand parseSingleCommand(List<String> wordList) throws IOException {//解析命令
         String cmd = wordList.get(0);
         CmdLineArgs args = parseArgs(wordList);
@@ -79,18 +78,16 @@ public class Parser implements IParser {
                 args.redirectOutputArg = Optional.ofNullable(wordList.get(++i));
             else if ("<".equals(s))
                 args.redirectInputArg = Optional.ofNullable(wordList.get(++i));
-            else if(s.startsWith("-")) {
+            else if (s.startsWith("-")) {
                 char[] chars = s.toCharArray();
                 for (int j = 1; j < chars.length; j++)
                     args.optionWithoutValue.add("-" + chars[j]);
-            }
-            else
+            } else
                 args.parameter.add(s);
         }
         return args;
     }
 
-    // <T> parseRedirection（args, default）
     private OutputStream parseOutPutReDirection(CmdLineArgs args) throws IOException {
 
         Optional<String> reOut = args.redirectOutputArg;
@@ -128,49 +125,7 @@ public class Parser implements IParser {
         public List<String> parameter = new ArrayList<>();
         public Optional<String> redirectOutputArg = Optional.empty();
         public Optional<String> redirectInputArg = Optional.empty();
-
-
-        public Map<String, String> getOptionWithValue() {
-            return optionWithValue;
-        }
-
-        public void setOptionWithValue(Map<String, String> optionWithValue) {
-            this.optionWithValue = optionWithValue;
-        }
-
-        public List<String> getOptionWithoutValue() {
-            return optionWithoutValue;
-        }
-
-        public void setOptionWithoutValue(List<String> optionWithoutValue) {
-            this.optionWithoutValue = optionWithoutValue;
-        }
-
-        public List<String> getParameter() {
-            return parameter;
-        }
-
-        public void setParameter(List<String> parameter) {
-            this.parameter = parameter;
-        }
-
-        public Optional<String> getRedirectOutputArg() {
-            return redirectOutputArg;
-        }
-
-        public void setRedirectOutputArg(Optional<String> redirectOutputArg) {
-            this.redirectOutputArg = redirectOutputArg;
-        }
-
-        public Optional<String> getRedirectInputArg() {
-            return redirectInputArg;
-        }
-
-        public void setRedirectInputArg(Optional<String> redirectInputArg) {
-            this.redirectInputArg = redirectInputArg;
-        }
     }
 }
-
 
 

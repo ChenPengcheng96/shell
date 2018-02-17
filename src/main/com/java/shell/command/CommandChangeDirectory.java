@@ -4,7 +4,6 @@ import com.java.shell.Shell;
 import com.java.shell.parser.Parser.CmdLineArgs;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
