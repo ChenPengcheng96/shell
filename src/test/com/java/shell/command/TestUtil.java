@@ -23,28 +23,68 @@ public class TestUtil {
         return new CommandChangeDirectory(shell, args, input, output);
     }
 
-    public static void deleteFiles(File f) throws IOException {
+    public static void deleteFiles(File f){
         if (f.isDirectory()) {
             for (File c : Objects.requireNonNull(f.listFiles()))
                 deleteFiles(c);
         }
-        if (!f.delete())
-            throw new FileNotFoundException("Failed to delete file: " + f);
+        if (!f.delete()){
+            System.err.println(f.getName()+"文件删除失败");
+        }
+
     }
 
-    public static void createFiles(File directory) throws IOException {
+    public static void createFiles(File directory){
         if(!directory.exists())
             directory.mkdir();
         if(!directory.isDirectory())
             throw new RuntimeException(directory + " not a parameter");
         File dir = new File(directory + "\\dir1\\dir2");
         dir.mkdirs();
-        new File(dir,"file.txt").createNewFile();
+        try {
+            new File(dir,"file.txt").createNewFile();
+        } catch (IOException e) {
+            System.err.println("文件创建失败");
+            return;
+        }
         File dirHidden = new File(directory+"\\dir1Hidden\\dir2Hidden");
         dirHidden.mkdirs();
-        new File(dirHidden,"fileHidden.txt").createNewFile();
-        Files.setAttribute(Paths.get(dirHidden.getParentFile().getAbsolutePath()), "dos:hidden", Boolean.TRUE, LinkOption.NOFOLLOW_LINKS);
-//        Runtime.getRuntime().exec("cmd.exe attrib +h "+dirHidden.getAbsolutePath());
+        try {
+            new File(dirHidden,"fileHidden.txt").createNewFile();
+        } catch (IOException e) {
+            System.err.println("文件创建失败");
+            return;
+        }
+        try {
+            Files.setAttribute(Paths.get(dirHidden.getParentFile().getAbsolutePath()), "dos:hidden", Boolean.TRUE, LinkOption.NOFOLLOW_LINKS);
+        } catch (IOException e) {
+            System.err.println("设置隐藏文件失败");
+            return;
+        }
+        createTestFile(directory);
+    }
+
+    public static void createTestFile(File directory){
+        File file = new File(directory,"123.txt");
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                System.err.println("文件创建失败");
+            }
+        }
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(file,"utf-8");
+        } catch (FileNotFoundException e) {
+            System.err.println(file.getName()+"文件不存在");;
+        } catch (UnsupportedEncodingException e) {
+            System.err.println("不支持此编码");
+        }
+        if(pw!=null){
+            pw.print("123456");
+            pw.close();
+        }
     }
 
 }

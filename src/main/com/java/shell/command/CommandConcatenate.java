@@ -53,6 +53,8 @@ public class CommandConcatenate extends SingleCommand{
         do {
             try {
                 s = bf.readLine();
+                if(s == null)
+                    break;
                 output.write(s.getBytes());
                 output.write("\n".getBytes());
                 if(s.trim().equals("") )

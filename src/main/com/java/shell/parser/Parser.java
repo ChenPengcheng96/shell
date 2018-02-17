@@ -108,9 +108,6 @@ public class Parser implements IParser {
         Optional<String> reIn = args.redirectInputArg;
         if (reIn.isPresent()) {
             File f = new File(reIn.get());
-            if (f.exists())
-                f.delete();
-            f.createNewFile();
             return new FileInputStream(f);
         }
         return System.in;
