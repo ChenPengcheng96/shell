@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.java.shell.command.TestUtil.createCommandFromArgs;
+import static com.java.shell.command.TestUtil.createFiles;
 import static com.java.shell.command.TestUtil.deleteFiles;
 
 /**
@@ -21,33 +22,19 @@ import static com.java.shell.command.TestUtil.deleteFiles;
 public class CommandChangeDirectoryTest {
 
     private Shell shell;
-    private static List<File> temFile = new ArrayList<>();
-
-    @BeforeClass
-    public static void setupFolders() throws IOException {
-        File root = Files.createTempDirectory("root").toFile();
-        File sub = new File(root.getAbsolutePath()+"\\456");
-        sub.mkdir();
-        temFile.add(root);
-        temFile.add(sub);
-        for(File file:temFile)
-            System.out.println(file.getAbsolutePath() + ":" + file.isDirectory());
-    }
-
-    @AfterClass
-    public static void cleanupFolders() throws IOException {
-        if (!temFile.isEmpty())
-            deleteFiles(temFile.get(0));
-    }
 
     @Before
     public void before() {
         shell = new Shell();
+        File tmpdir = new File(System.getProperty("java.io.tmpdir")+"\\root");
+        shell.setDir(tmpdir);
+        TestUtil.createFiles();
     }
 
     @After
     public void after(){
-
+        String tmpdir = System.getProperty("java.io.tmpdir");
+        TestUtil.deleteFiles(new File(tmpdir+"\\root"));
     }
 
     /**

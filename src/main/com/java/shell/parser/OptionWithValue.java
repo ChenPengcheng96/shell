@@ -11,10 +11,10 @@ public class OptionWithValue implements IParam {
 
     @Override
     public void register(Parser.CmdLineArgs args) {
-        args.optionWithValue.put(key,value);
+        args.optionWithValue.put(key, value);
     }
 
-    public String toString(){
-        return key+" "+value;
+    public String toString() {
+        return key + " " + value;
     }
 }

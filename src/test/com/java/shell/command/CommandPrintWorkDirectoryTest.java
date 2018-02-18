@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.After;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -23,10 +24,15 @@ public class CommandPrintWorkDirectoryTest {
     @Before
     public void before() {
         shell = new Shell();
+        File tmpdir = new File(System.getProperty("java.io.tmpdir")+"\\root");
+        shell.setDir(tmpdir);
+        TestUtil.createFiles();
     }
 
     @After
     public void after() {
+        String tmpdir = System.getProperty("java.io.tmpdir");
+        TestUtil.deleteFiles(new File(tmpdir+"\\root"));
     }
 
     /**
@@ -35,7 +41,7 @@ public class CommandPrintWorkDirectoryTest {
     @Test
     public void testRun() throws IOException {
 //TODO: Test goes here...
-        Parser.CmdLineArgs args = new Parser.CmdLineArgs();
+        Parser.CmdLineArgs args = Parser.CmdLineArgs.parseParam(shell,TestUtil.toWordList("pwd"));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         String expected = shell.getDir().getAbsolutePath()+"\n";
         CommandPrintWorkDirectory cmd = new CommandPrintWorkDirectory(shell,args,null,output);

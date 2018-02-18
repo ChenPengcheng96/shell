@@ -20,17 +20,18 @@ public class CommandChangeDirectory extends SingleCommand {
     public String getCommandName() {
         return COMMAND_NAME;
     }
+
     public int run() {
         List<String> args = getArgs().parameter;
-        if(validValue(args) != 0)
+        if (validValue() != 0)
             return 1;
         String workDir;
-        if(!args.isEmpty()){
+        if (!args.isEmpty()) {
             File file;
             workDir = args.get(0);
             //判断是否为绝对路径
             if (!workDir.matches("[a-zA-Z]:.*?"))
-                file = new File(getShell().getDir(),workDir);
+                file = new File(getShell().getDir(), workDir);
             else
                 file = new File(workDir);
             getShell().setDir(file);
@@ -38,17 +39,26 @@ public class CommandChangeDirectory extends SingleCommand {
         return 0;
     }
 
-    private int validValue(List<String> args){
+    private int validValue() {
+        List<String> args = getArgs().parameter;
         if (args.size() > 1) {
             System.err.println("命令'" + getCommandName() + "'用法错误");
             return 1;
         }
-        if(!args.isEmpty()){
+        if (!args.isEmpty()) {
             String filename = args.get(0);
             if (!new File(filename).exists()) {
                 System.err.println("文件不存在");
                 return 1;
             }
+        }
+        if(!getArgs().optionWithoutValue.isEmpty()){
+            System.err.println("参数错误");
+            return 1;
+        }
+        if(!getArgs().optionWithValue.isEmpty()){
+            System.err.println("参数错误");
+            return 1;
         }
         return 0;
     }

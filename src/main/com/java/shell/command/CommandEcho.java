@@ -10,6 +10,7 @@ import java.io.OutputStream;
 
 public class CommandEcho extends SingleCommand {
     private static final String COMMAND_NAME = "echo";
+
     public CommandEcho(Shell shell, Parser.CmdLineArgs args, InputStream input, OutputStream output) {
         super(shell, args, input, output);
     }
@@ -23,24 +24,25 @@ public class CommandEcho extends SingleCommand {
     public int run() {
         boolean tag_n = false;
         OutputStream output = getOutput();
-        for(IParam p : getArgs().param){
+        boolean i = false;
+        for (IParam p : getArgs().param) {
             String info = p.toString();
-            if(info.equals("-n")){
+            if (!i && info.matches("-n+")) {
                 tag_n = true;
                 continue;
-            }
-
-            try{
+            }else
+                i = true;
+            try {
                 output.write(info.getBytes());
                 output.write(" ".getBytes());
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.err.println("写入失败");
                 return 1;
             }
         }
         try {
-            if(!tag_n)
-            output.write("\n".getBytes());
+            if (!tag_n)
+                output.write("\n".getBytes());
         } catch (IOException e) {
             System.err.println("写入失败");
             return 1;

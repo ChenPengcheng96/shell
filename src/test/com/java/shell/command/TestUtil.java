@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class TestUtil {
@@ -32,7 +33,9 @@ public class TestUtil {
 
     }
 
-    public static void createFiles(File directory){
+    public static void createFiles(){
+        String tmpdir = System.getProperty("java.io.tmpdir");
+        File directory = new File(tmpdir+"\\root");
         if(!directory.exists())
             directory.mkdir();
         if(!directory.isDirectory())
@@ -85,4 +88,7 @@ public class TestUtil {
         }
     }
 
+    public static List<String> toWordList(String s){
+        return Arrays.asList(s.trim().split("\\s+"));
+    }
 }

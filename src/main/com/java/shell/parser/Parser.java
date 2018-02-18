@@ -16,7 +16,7 @@ public class Parser implements IParser {
     }
 
     @Override
-    public ICommand parse(String line){//解析整行命令
+    public ICommand parse(String line) {//解析整行命令
         List<List<String>> commandLines = new ArrayList<>();
         splitCommandLines(line, commandLines);
         if (commandLines.size() > 1) {
@@ -38,15 +38,14 @@ public class Parser implements IParser {
         }
     }
 
-    private SingleCommand parseSingleCommand(List<String> wordList){//解析单元命令
+    private SingleCommand parseSingleCommand(List<String> wordList) {//解析单元命令
         String cmd = wordList.get(0);
-        CmdLineArgs args = parseParam(shell,wordList);
+        CmdLineArgs args = parseParam(shell, wordList);
         InputStream input = System.in;
         OutputStream output = System.out;
-        if(args.redirectInputArg.isPresent()){
+        if (args.redirectInputArg.isPresent()) {
             input = redirectInput(args.redirectInputArg.get());
-        }
-        else if(args.redirectOutputArg.isPresent()){
+        } else if (args.redirectOutputArg.isPresent()) {
             output = redirectOutput(args.redirectOutputArg.get());
         }
         SingleCommand command = null;
@@ -67,10 +66,10 @@ public class Parser implements IParser {
                 command = new CommandConcatenate(shell, args, input, output);
                 break;
             case "set":
-                command = new CommandSet(shell,args,input,output);
+                command = new CommandSet(shell, args, input, output);
                 break;
             case "echo":
-                command = new CommandEcho(shell,args,input,output);
+                command = new CommandEcho(shell, args, input, output);
                 break;
             default:
                 System.out.println("'" + cmd + "'" + "不是外部命令，也不是可运行的程序或批处理文件。");
@@ -88,7 +87,7 @@ public class Parser implements IParser {
         public Optional<String> redirectOutputArg = Optional.empty();
         public Optional<String> redirectInputArg = Optional.empty();
 
-        public CmdLineArgs(){}
+        private CmdLineArgs(){}
 
         //将单元命令解析成命令CmdLineArgs
         public static CmdLineArgs parseParam(Shell shell,List<String> wordList){
@@ -100,9 +99,10 @@ public class Parser implements IParser {
                 if(s == null)
                     continue;
                 if(s.startsWith("-")){
-                    char[] chars = s.toCharArray();
-                    for (int j = 1; j < chars.length; j++)
-                        param.add(new OptionWithoutValue("-" + chars[j]));
+                    param.add(new OptionWithoutValue(s));
+//                    char[] chars = s.toCharArray();
+//                    for (int j = 1; j < chars.length; j++)
+//                        param.add(new OptionWithoutValue("-" + chars[j]));
                 }
                 else if(s.startsWith("--"))
                     param.add(new OptionWithValue(s,wordList.get(++i)));

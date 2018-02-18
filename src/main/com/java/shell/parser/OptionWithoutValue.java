@@ -9,9 +9,12 @@ public class OptionWithoutValue implements IParam {
 
     @Override
     public void register(Parser.CmdLineArgs args) {
-        args.optionWithoutValue.add(value);
+        char[] chars = value.toCharArray();
+        for (int j = 1; j < chars.length; j++)
+            args.optionWithoutValue.add("-" + chars[j]);
     }
-    public String toString(){
+
+    public String toString() {
         return value;
     }
 }

@@ -44,12 +44,12 @@ public abstract class SingleCommand implements ICommand {
         }
     }
 
-    public void setInput(InputStream input) {
-        this.input = input;
-    }
-
     InputStream getInput() {
         return input;
+    }
+
+    public void setInput(InputStream input) {
+        this.input = input;
     }
 
     public Shell getShell() {

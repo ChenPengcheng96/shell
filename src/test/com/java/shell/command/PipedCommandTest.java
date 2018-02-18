@@ -27,7 +27,7 @@ public class PipedCommandTest {
          shell = new Shell();
          File tmpdir = new File(System.getProperty("java.io.tmpdir")+"\\root");
          shell.setDir(tmpdir);
-         TestUtil.createFiles(tmpdir);
+         TestUtil.createFiles();
     }
 
     @After
@@ -40,10 +40,11 @@ public class PipedCommandTest {
      * Method: run()
      */
     @Test
+    //ls | cat
     public void testRun() throws Exception {
 //TODO: Test goes here...
-        Parser.CmdLineArgs arg1 = new Parser.CmdLineArgs();
-        Parser.CmdLineArgs arg2 = new Parser.CmdLineArgs();
+        Parser.CmdLineArgs arg1 = Parser.CmdLineArgs.parseParam(shell,TestUtil.toWordList("ls"));
+        Parser.CmdLineArgs arg2 = Parser.CmdLineArgs.parseParam(shell,TestUtil.toWordList("cat"));
         SingleCommand cmd1 = new CommandList(shell,arg1,null,System.out);
         ByteArrayInputStream bis = new ByteArrayInputStream(cmd1.getOutput().toString().getBytes());
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -52,7 +53,7 @@ public class PipedCommandTest {
         cmdList.add(cmd1);
         cmdList.add(cmd2);
         PipedCommand pipedcmd = new PipedCommand(cmdList);
-        String expected = "dir1";
+        String expected = "123.txt\tdir1";
         pipedcmd.run();
         String actual = cmd2.getOutput().toString().trim();
         Assert.assertEquals(expected, actual);

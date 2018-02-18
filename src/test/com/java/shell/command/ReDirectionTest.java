@@ -9,32 +9,24 @@ import java.util.Optional;
 
 public class ReDirectionTest {
     private Shell shell;
-    @BeforeClass
-    public static void createTestFiles(){
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        TestUtil.createFiles(new File(tmpdir+"\\root"));
-    }
-    @AfterClass
-    public static void deleteTestFiles(){
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        TestUtil.deleteFiles(new File(tmpdir+"\\root"));
-    }
 
     @Before
     public void before(){
         shell = new Shell();
-        String dirname = System.getProperty("java.io.tmpdir")+"\\root";
-        shell.setDir(new File(dirname));
+        File tmpdir = new File(System.getProperty("java.io.tmpdir")+"\\root");
+        shell.setDir(tmpdir);
+        TestUtil.createFiles();
     }
 
     @After
     public void after(){
-
+        String tmpdir = System.getProperty("java.io.tmpdir");
+        TestUtil.deleteFiles(new File(tmpdir+"\\root"));
     }
 
     @Test
     public void reOutputTest(){
-        Parser.CmdLineArgs args = new Parser.CmdLineArgs();
+        Parser.CmdLineArgs args = Parser.CmdLineArgs.parseParam(shell,TestUtil.toWordList("ls > 123.txt"));
         String filename = shell.getDir().getAbsolutePath()+"\\123.txt";
         args.redirectOutputArg = Optional.of(filename);
         FileInputStream input = null;
@@ -54,7 +46,7 @@ public class ReDirectionTest {
 
     @Test
     public void reInputTest(){
-        Parser.CmdLineArgs args = new Parser.CmdLineArgs();
+        Parser.CmdLineArgs args = Parser.CmdLineArgs.parseParam(shell,TestUtil.toWordList("cat < 456.txt"));
         String filename = shell.getDir().getAbsolutePath()+"\\456.txt";
         args.redirectInputArg = Optional.of(filename);
         FileOutputStream output = null;

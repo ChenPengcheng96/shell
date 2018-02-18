@@ -1,14 +1,12 @@
 package com.java.shell.parser;
 
-import com.sun.javafx.image.BytePixelSetter;
-
 import java.util.Optional;
 
 public class RedirectParam implements IParam {
     private RedirectType type;
     private String value;
 
-    public RedirectParam(RedirectType type,String value) {
+    public RedirectParam(RedirectType type, String value) {
         this.type = type;
         this.value = value;
 
@@ -16,7 +14,7 @@ public class RedirectParam implements IParam {
 
     @Override
     public void register(Parser.CmdLineArgs args) {
-        if(type.equals(RedirectType.Input))
+        if (type.equals(RedirectType.Input))
             args.redirectInputArg = Optional.of(value);
         else
             args.redirectOutputArg = Optional.of(value);

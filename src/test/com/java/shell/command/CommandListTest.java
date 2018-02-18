@@ -19,26 +19,17 @@ import java.util.ArrayList;
 public class CommandListTest {
     private Shell shell;
 
-    @BeforeClass
-    public static void createDemoFiles() throws IOException {
-        String temDirectory = System.getProperty("java.io.tmpdir");
-        File root = new File(temDirectory+"root");
-        if(root.exists())
-            TestUtil.deleteFiles(root);
-        TestUtil.createFiles(root);
-    }
     @Before
     public void before() throws Exception {
         shell = new Shell();
-        String dirname = System.getProperty("java.io.tmpdir")+"\\root";
-        shell.setDir(new File(dirname));
+        File tmpdir = new File(System.getProperty("java.io.tmpdir")+"\\root");
+        shell.setDir(tmpdir);
+        TestUtil.createFiles();
     }
     @AfterClass
     public static void deleteDemoFiles() throws IOException {
-        String temDirectory = System.getProperty("java.io.tmpdir");
-        File root = new File(temDirectory+"root");
-        if(root.exists())
-            TestUtil.deleteFiles(root);
+        String tmpdir = System.getProperty("java.io.tmpdir");
+        TestUtil.deleteFiles(new File(tmpdir+"\\root"));
     }
     @After
     public void after() throws Exception {
@@ -58,11 +49,10 @@ public class CommandListTest {
     @Test
     public void testListCurrentDirectory() throws Exception {
 //TODO: Test goes here...
-        Parser.CmdLineArgs args = new Parser.CmdLineArgs();
-        args.parameter = new ArrayList<>();
+        Parser.CmdLineArgs args = Parser.CmdLineArgs.parseParam(shell,TestUtil.toWordList("ls"));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         CommandList cmd = new CommandList(shell, args, null, output);
-        String expected = "dir1";
+        String expected = "123.txt\tdir1";
         cmd.run();
         String actual = output.toString().trim();
         Assert.assertEquals(expected, actual);
@@ -71,14 +61,10 @@ public class CommandListTest {
     @Test
     public void testListWithA() throws Exception {
 //TODO: Test goes here...
-        Parser.CmdLineArgs args = new Parser.CmdLineArgs();
-        args.parameter = new ArrayList<>();
-        ArrayList<String> singleArg = new ArrayList<>();
-        singleArg.add("-a");
-        args.optionWithoutValue = singleArg;
+        Parser.CmdLineArgs args = Parser.CmdLineArgs.parseParam(shell,TestUtil.toWordList("ls -a"));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         CommandList cmd = new CommandList(shell, args, null, output);
-        String expected = "dir1\tdir1Hidden";
+        String expected = "123.txt\tdir1\tdir1Hidden";
         cmd.run();
         String actual = output.toString().trim();
         Assert.assertEquals(expected, actual);
@@ -87,33 +73,24 @@ public class CommandListTest {
     @Test
     public void testListWithL() throws Exception {
 //TODO: Test goes here...
-        Parser.CmdLineArgs args = new Parser.CmdLineArgs();
-        args.parameter= new ArrayList<>();
-        ArrayList<String> singleArg = new ArrayList<>();
-        singleArg.add("-l");
-        args.optionWithoutValue = singleArg;
+        Parser.CmdLineArgs args = Parser.CmdLineArgs.parseParam(shell,TestUtil.toWordList("ls -l"));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         CommandList cmd = new CommandList(shell, args, null, output);
-        String expected = "0dir1";
+        String expected = "6 123.txt\n" + "0 dir1\n";
         cmd.run();
-        String[] tem = output.toString().split("\\t+");
-        String actual = tem[0].trim() + tem[2].trim();
+        String regex = "\\s+[A-Z][a-z][a-z] \\d\\d \\d\\d:\\d\\d\\s+";
+        String actual = output.toString().replaceAll(regex," ");
         Assert.assertEquals(expected,actual);
     }
 
     @Test
     public void testListWithAL() throws Exception {
 //TODO: Test goes here...
-        Parser.CmdLineArgs args = new Parser.CmdLineArgs();
-        args.parameter = new ArrayList<>();
-        ArrayList<String> singleArg = new ArrayList<>();
-        singleArg.add("-a");
-        singleArg.add("-l");
-        args.optionWithoutValue = singleArg;
+        Parser.CmdLineArgs args = Parser.CmdLineArgs.parseParam(shell,TestUtil.toWordList("ls -al"));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         CommandList cmd = new CommandList(shell, args, null, output);
         String regex = "\\s+[A-Z][a-z][a-z] \\d\\d \\d\\d:\\d\\d\\s+";
-        String expected = "0 dir1\n0 dir1Hidden";
+        String expected = "6 123.txt\n" + "0 dir1\n" + "0 dir1Hidden";
         cmd.run();
         String actual = output.toString().replaceAll(regex," ").trim();
         Assert.assertEquals(expected,actual);

@@ -13,8 +13,9 @@ import java.util.Map;
 
 public class Shell {
     private File dir = new File("");
-    private Map<String,String> env = new HashMap<>();
-    public Shell(){
+    private Map<String, String> env = new HashMap<>();
+
+    public Shell() {
         env = System.getenv();
     }
 
@@ -45,11 +46,11 @@ public class Shell {
         return br.readLine().trim();
     }
 
-    public Map<String,String> getEnv() {
+    public Map<String, String> getEnv() {
         return env;
     }
 
-    public void setEnv(Map<String,String> env) {
+    public void setEnv(Map<String, String> env) {
         this.env = env;
     }
 
