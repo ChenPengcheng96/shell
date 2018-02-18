@@ -24,8 +24,7 @@ public class CommandSet extends SingleCommand{
 
     @Override
     public int run() {
-        Map<String,String> env = new HashMap<>();
-        env.putAll(System.getenv());
+        Map<String, String> env = new HashMap<>(System.getenv());
         List<String> pair =  getArgs().parameter;
         //判断命令输入是否有效
         if(validValue(pair) != 0)

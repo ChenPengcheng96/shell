@@ -8,15 +8,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
 public class TestUtil {
     private TestUtil(){}
     public static CommandChangeDirectory createCommandFromArgs(Shell shell, String singleLine) {
-        Parser p = new Parser(shell);
-        Parser.CmdLineArgs args = Parser.parseParam(shell,Arrays.asList(singleLine.split(" ")));
+        Parser.CmdLineArgs args = Parser.CmdLineArgs.parseParam(shell,Arrays.asList(singleLine.split(" ")));
         String inputString = "";
         InputStream input = new ByteArrayInputStream(inputString.getBytes(StandardCharsets.UTF_8));
         OutputStream output = new ByteArrayOutputStream();

@@ -6,6 +6,8 @@ import com.java.shell.command.*;
 import java.io.*;
 import java.util.*;
 
+import static com.java.shell.parser.Parser.CmdLineArgs.parseParam;
+
 public class Parser implements IParser {
     private Shell shell;
 
@@ -88,12 +90,36 @@ public class Parser implements IParser {
 
         public CmdLineArgs(){}
 
+        //将单元命令解析成命令CmdLineArgs
+        public static CmdLineArgs parseParam(Shell shell,List<String> wordList){
+            List<IParam> param = new ArrayList<>();
+            for (int i = 1; i < wordList.size(); i++) {
+                String s = wordList.get(i);
+                if(s.startsWith("$"))
+                    s = shell.getEnv().get(s.substring(1));
+                if(s == null)
+                    continue;
+                if(s.startsWith("-")){
+                    char[] chars = s.toCharArray();
+                    for (int j = 1; j < chars.length; j++)
+                        param.add(new OptionWithoutValue("-" + chars[j]));
+                }
+                else if(s.startsWith("--"))
+                    param.add(new OptionWithValue(s,wordList.get(++i)));
+                else if(s.equals(">"))
+                    param.add(new RedirectParam(RedirectParam.RedirectType.Output,wordList.get(++i)));
+                else if(s.equals("<"))
+                    param.add(new RedirectParam(RedirectParam.RedirectType.Input,wordList.get(++i)));
+                else
+                    param.add(new Parameter(s));
+            }
+            return CmdLineArgs.of(param);
+        }
+
         //工厂函数：传入参数自动封装成CmdLineArgs类型，用在parseIParam
-        static CmdLineArgs of(List<IParam> param,String inputFileName,String outputFileName) {
+        static CmdLineArgs of(List<IParam> param) {
             CmdLineArgs args = new CmdLineArgs();
             args.param = param;
-            args.redirectInputArg = Optional.ofNullable(inputFileName);
-            args.redirectOutputArg = Optional.ofNullable(outputFileName);
             for(IParam p : param){
                 p.register(args);
             }
@@ -101,34 +127,7 @@ public class Parser implements IParser {
         }
     }
 
-    //将单元命令解析成命令CmdLineArgs
-    public static CmdLineArgs parseParam(Shell shell,List<String> wordList){
-        List<IParam> param = new ArrayList<>();
-        String outputFileName = null;
-        String inputFileName = null;
-        for (int i = 1; i < wordList.size(); i++) {
-            String s = wordList.get(i);
-            if(s.startsWith("$"))
-                s = shell.getEnv().get(s.substring(1));
-            if(s == null)
-                continue;
-            if(s.startsWith("-")){
-                char[] chars = s.toCharArray();
-                for (int j = 1; j < chars.length; j++)
-                    param.add(new OptionWithoutValue("-" + chars[j]));
-            }
-            else if(s.startsWith("--"))
-                param.add(new OptionWithValue(s,wordList.get(++i)));
-            else if(s.equals(">"))
-                outputFileName = wordList.get(++i);
-            else if(s.equals("<"))
-                inputFileName = wordList.get(++i);
-            else
-                param.add(new Parameter(s));
-        }
-        return CmdLineArgs.of(param,inputFileName,outputFileName);
-    }
-
+    //用于重定向输入：将解析的重定向参数转变成文件输入流
     private InputStream redirectInput(String filename){
         if (filename != null) {
             if (!filename.matches("[a-zA-Z]:.*?"))
@@ -143,16 +142,17 @@ public class Parser implements IParser {
         return System.in;
     }
 
+    //用于重定向输出：将解析的重定向参数转变成文件输出流
     private OutputStream redirectOutput(String filename){
         if (filename != null) {
             if (!filename.matches("[a-zA-Z]:.*?"))
                 filename = shell.getDir().getAbsolutePath() + "\\" + filename;
             File f = new File(filename);
             if (f.exists())
-                f.delete();
+                if(f.delete())
             try {
-                f.createNewFile();
-                return new FileOutputStream(f);
+                if(f.createNewFile())
+                    return new FileOutputStream(f);
             } catch (IOException e) {
                 System.err.println("I/O error");
             }
