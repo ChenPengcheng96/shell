@@ -6,6 +6,7 @@ import com.java.shell.parser.Parser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,8 @@ public class CommandSet extends SingleCommand{
 
     @Override
     public int run() {
-        Map<String,String> env = getShell().getEnv();
+        Map<String,String> env = new HashMap<>();
+        env.putAll(System.getenv());
         List<String> pair =  getArgs().parameter;
         //判断命令输入是否有效
         if(validValue(pair) != 0)

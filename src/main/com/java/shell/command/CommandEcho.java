@@ -21,10 +21,17 @@ public class CommandEcho extends SingleCommand {
 
     @Override
     public int run() {
+        boolean tag_n = false;
         OutputStream output = getOutput();
         for(IParam p : getArgs().param){
+            String info = p.toString();
+            if(info.equals("-n")){
+                tag_n = true;
+                continue;
+            }
+
             try{
-                output.write(p.toString().getBytes());
+                output.write(info.getBytes());
                 output.write(" ".getBytes());
             }catch (Exception e){
                 System.err.println("写入失败");
@@ -32,6 +39,7 @@ public class CommandEcho extends SingleCommand {
             }
         }
         try {
+            if(!tag_n)
             output.write("\n".getBytes());
         } catch (IOException e) {
             System.err.println("写入失败");

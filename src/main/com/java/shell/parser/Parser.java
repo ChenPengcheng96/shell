@@ -14,7 +14,7 @@ public class Parser implements IParser {
     }
 
     @Override
-    public ICommand parse(String line){
+    public ICommand parse(String line){//解析整行命令
         List<List<String>> commandLines = new ArrayList<>();
         splitCommandLines(line, commandLines);
         if (commandLines.size() > 1) {
@@ -28,20 +28,17 @@ public class Parser implements IParser {
             return parseSingleCommand(commandLines.get(0));
     }
 
-    private void splitCommandLines(String line, List<List<String>> commandLines) {
+    private void splitCommandLines(String line, List<List<String>> commandLines) {//将一行命令分成命令最小单元
         String[] strs = line.split("\\|");
         for (String s : strs) {
-            List<String> list = new ArrayList<>(Arrays.asList(s.trim().split(" ")));
+            List<String> list = new ArrayList<>(Arrays.asList(s.trim().split("\\s+")));
             commandLines.add(list);
         }
     }
 
-    private SingleCommand parseSingleCommand(List<String> wordList){//解析命令
+    private SingleCommand parseSingleCommand(List<String> wordList){//解析单元命令
         String cmd = wordList.get(0);
-//        CmdLineArgs args = parseArgs(wordList);
-//        InputStream input = parseInputReDirection(args);
-//        OutputStream output = parseOutPutReDirection(args);
-        CmdLineArgs args = parseIParam(wordList);
+        CmdLineArgs args = parseParam(shell,wordList);
         InputStream input = System.in;
         OutputStream output = System.out;
         if(args.redirectInputArg.isPresent()){
@@ -80,61 +77,8 @@ public class Parser implements IParser {
         return command;
     }
 
-    public CmdLineArgs parseArgs(List<String> wordList) {//解析参数
-        CmdLineArgs args = new CmdLineArgs();
-        for (int i = 1; i < wordList.size(); i++) {
-            String s = wordList.get(i);
-            if (s.matches("--[a-zA-Z]+"))
-                args.optionWithValue.put(s, wordList.get(++i));
-            else if (">".equals(s))
-                args.redirectOutputArg = Optional.ofNullable(wordList.get(++i));
-            else if ("<".equals(s))
-                args.redirectInputArg = Optional.ofNullable(wordList.get(++i));
-            else if (s.startsWith("-")) {
-                char[] chars = s.toCharArray();
-                for (int j = 1; j < chars.length; j++)
-                    args.optionWithoutValue.add("-" + chars[j]);
-            } else
-                args.parameter.add(s);
-        }
-        return args;
-    }
 
-    private OutputStream parseOutPutReDirection(CmdLineArgs args){
-
-        Optional<String> reOut = args.redirectOutputArg;
-        if (reOut.isPresent()) {
-            String filename = reOut.get();
-            if (!filename.matches("[a-zA-Z]:.*?"))
-                filename = shell.getDir().getAbsolutePath() + "\\" + filename;
-            File f = new File(filename);
-            if (f.exists())
-                f.delete();
-            try {
-                f.createNewFile();
-                return new FileOutputStream(f);
-            } catch (IOException e) {
-                System.err.println("I/O error");
-            }
-
-        }
-        return System.out;
-    }
-
-    private InputStream parseInputReDirection(CmdLineArgs args){
-        Optional<String> reIn = args.redirectInputArg;
-        if (reIn.isPresent()) {
-            File f = new File(reIn.get());
-            try {
-                return new FileInputStream(f);
-            } catch (FileNotFoundException e) {
-                System.err.println("文件不存在");
-            }
-        }
-        return System.in;
-    }
-
-    public static class CmdLineArgs {
+    public static class CmdLineArgs {//静态内部类,将单元命令的数据结构
         public List<IParam> param = new ArrayList<>();
         public Map<String, String> optionWithValue = new HashMap<>();
         public List<String> optionWithoutValue = new ArrayList<>();
@@ -144,7 +88,8 @@ public class Parser implements IParser {
 
         public CmdLineArgs(){}
 
-        public static CmdLineArgs of(List<IParam> param,String inputFileName,String outputFileName) {
+        //工厂函数：传入参数自动封装成CmdLineArgs类型，用在parseIParam
+        static CmdLineArgs of(List<IParam> param,String inputFileName,String outputFileName) {
             CmdLineArgs args = new CmdLineArgs();
             args.param = param;
             args.redirectInputArg = Optional.ofNullable(inputFileName);
@@ -156,12 +101,17 @@ public class Parser implements IParser {
         }
     }
 
-    private CmdLineArgs parseIParam(List<String> wordList){
+    //将单元命令解析成命令CmdLineArgs
+    public static CmdLineArgs parseParam(Shell shell,List<String> wordList){
         List<IParam> param = new ArrayList<>();
         String outputFileName = null;
         String inputFileName = null;
         for (int i = 1; i < wordList.size(); i++) {
             String s = wordList.get(i);
+            if(s.startsWith("$"))
+                s = shell.getEnv().get(s.substring(1));
+            if(s == null)
+                continue;
             if(s.startsWith("-")){
                 char[] chars = s.toCharArray();
                 for (int j = 1; j < chars.length; j++)
