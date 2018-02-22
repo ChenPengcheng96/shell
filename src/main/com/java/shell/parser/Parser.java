@@ -72,8 +72,7 @@ public class Parser implements IParser {
                 command = new CommandEcho(shell, args, input, output);
                 break;
             default:
-                System.out.println("'" + cmd + "'" + "不是外部命令，也不是可运行的程序或批处理文件。");
-                break;
+                command = new CommandExternal(cmd,shell, args, input, output);
         }
         return command;
     }
@@ -149,7 +148,7 @@ public class Parser implements IParser {
                 filename = shell.getDir().getAbsolutePath() + "\\" + filename;
             File f = new File(filename);
             if (f.exists())
-                if(f.delete())
+                f.delete();
             try {
                 if(f.createNewFile())
                     return new FileOutputStream(f);

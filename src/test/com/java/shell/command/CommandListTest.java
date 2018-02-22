@@ -6,8 +6,6 @@ import org.junit.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * CommandList Tester.
@@ -20,26 +18,26 @@ public class CommandListTest {
     private Shell shell;
 
     @Before
-    public void before() throws Exception {
+    public void before(){
         shell = new Shell();
         File tmpdir = new File(System.getProperty("java.io.tmpdir")+"\\root");
         shell.setDir(tmpdir);
         TestUtil.createFiles();
     }
     @AfterClass
-    public static void deleteDemoFiles() throws IOException {
+    public static void deleteDemoFiles(){
         String tmpdir = System.getProperty("java.io.tmpdir");
         TestUtil.deleteFiles(new File(tmpdir+"\\root"));
     }
     @After
-    public void after() throws Exception {
+    public void after(){
     }
 
     /**
      * Method: getCommandName()
      */
     @Test
-    public void testGetCommandName() throws Exception {
+    public void testGetCommandName(){
 //TODO: Test goes here... 
     }
 
@@ -47,7 +45,7 @@ public class CommandListTest {
      * Method: run()
      */
     @Test
-    public void testListCurrentDirectory() throws Exception {
+    public void testListCurrentDirectory() {
 //TODO: Test goes here...
         Parser.CmdLineArgs args = Parser.CmdLineArgs.parseParam(shell,TestUtil.toWordList("ls"));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -59,7 +57,7 @@ public class CommandListTest {
     }
 
     @Test
-    public void testListWithA() throws Exception {
+    public void testListWithA(){
 //TODO: Test goes here...
         Parser.CmdLineArgs args = Parser.CmdLineArgs.parseParam(shell,TestUtil.toWordList("ls -a"));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -71,7 +69,7 @@ public class CommandListTest {
     }
 
     @Test
-    public void testListWithL() throws Exception {
+    public void testListWithL() {
 //TODO: Test goes here...
         Parser.CmdLineArgs args = Parser.CmdLineArgs.parseParam(shell,TestUtil.toWordList("ls -l"));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -84,7 +82,7 @@ public class CommandListTest {
     }
 
     @Test
-    public void testListWithAL() throws Exception {
+    public void testListWithAL(){
 //TODO: Test goes here...
         Parser.CmdLineArgs args = Parser.CmdLineArgs.parseParam(shell,TestUtil.toWordList("ls -al"));
         ByteArrayOutputStream output = new ByteArrayOutputStream();

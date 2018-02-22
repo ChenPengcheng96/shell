@@ -6,10 +6,9 @@ public class RedirectParam implements IParam {
     private RedirectType type;
     private String value;
 
-    public RedirectParam(RedirectType type, String value) {
+    RedirectParam(RedirectType type, String value) {
         this.type = type;
         this.value = value;
-
     }
 
     @Override
